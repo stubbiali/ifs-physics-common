@@ -1,0 +1,4 @@
+gt4py@git+https://github.com/GridTools/gt4py.git@main#egg=gt4py
+numpy
+pydantic
+sympl@git+https://github.com/stubbiali/sympl.git@oop#egg=sympl
