@@ -1,7 +1,0 @@
-black >= 22.6.0
-flake8
-ipdb
-ipython
-mypy
-pre-commit
-pytest
