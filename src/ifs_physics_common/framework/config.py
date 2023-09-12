@@ -12,7 +12,8 @@ class DataTypes(BaseModel):
     float: Type
     int: Type
 
-    def with_precision(self, precision: Literal["double", "single"]) -> DataTypes:
+    @staticmethod
+    def with_precision(precision: Literal["double", "single"]) -> DataTypes:
         if precision == "double":
             return DataTypes(bool=bool, float=np.float64, int=np.int64)
         elif precision == "single":

@@ -11,10 +11,10 @@ if TYPE_CHECKING:
     from sympl._core.data_array import DataArray
     from sympl._core.typingx import DataArrayDict
 
-    from ifs_physics_common.utils.typingx import Storage
+    from ifs_physics_common.utils.typingx import ArrayLike
 
 
-def validate_storage_2d(src: Storage, trg: Storage) -> bool:
+def validate_storage_2d(src: ArrayLike, trg: ArrayLike) -> bool:
     src_np = to_numpy(src)
     trg_np = to_numpy(trg)
     mi = min(src_np.shape[0], trg_np.shape[0])
@@ -22,7 +22,7 @@ def validate_storage_2d(src: Storage, trg: Storage) -> bool:
     return np.allclose(src_np[:mi, :mj], trg_np[:mi, :mj], atol=1e-18, rtol=1e-12)
 
 
-def validate_storage_3d(src: Storage, trg: Storage) -> bool:
+def validate_storage_3d(src: ArrayLike, trg: ArrayLike) -> bool:
     src_np = to_numpy(src)
     trg_np = to_numpy(trg)
     mi = min(src_np.shape[0], trg_np.shape[0])
@@ -40,7 +40,7 @@ def validate_field(src: DataArray, trg: DataArray) -> bool:
         raise ValueError("The field to validate must be either 2-d or 3-d.")
 
 
-def validate(src: DataArrayDict, trg: DataArrayDict) -> Tuple[str]:
+def validate(src: DataArrayDict, trg: DataArrayDict) -> Tuple[str, ...]:
     return tuple(
         name
         for name in src

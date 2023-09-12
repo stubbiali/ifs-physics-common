@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from sympl._core.typingx import PropertyDict
 
     from ifs_physics_common.framework.grid import ComputationalGrid
-    from ifs_physics_common.utils.typingx import Storage
+    from ifs_physics_common.utils.typingx import ArrayLike
 
 
 class ComputationalGridComponent:
@@ -44,7 +44,7 @@ class ComputationalGridComponent:
             field_prop["dims"] = self.computational_grid.grids[field_prop["grid"]].dims
         return properties
 
-    def allocate(self, name: str, properties: PropertyDict) -> Storage:
+    def allocate(self, name: str, properties: PropertyDict) -> ArrayLike:
         data_shape = get_data_shape_from_name(name)
         dtype = get_dtype_from_name(name)
         return zeros(
@@ -83,7 +83,7 @@ class DiagnosticComponent(ComputationalGridComponent, SymplDiagnosticComponent):
         """
         ...
 
-    def allocate_diagnostic(self, name: str) -> Storage:
+    def allocate_diagnostic(self, name: str) -> ArrayLike:
         return self.allocate(name, self.diagnostic_properties)
 
     @cached_property
@@ -128,7 +128,7 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
         """
         ...
 
-    def allocate_tendency(self, name: str) -> Storage:
+    def allocate_tendency(self, name: str) -> ArrayLike:
         return self.allocate(name, self.tendency_properties)
 
     @cached_property
@@ -145,7 +145,7 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
         """
         ...
 
-    def allocate_diagnostic(self, name: str) -> Storage:
+    def allocate_diagnostic(self, name: str) -> ArrayLike:
         return self.allocate(name, self.diagnostic_properties)
 
     @cached_property

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from gt4py.cartesian import gtscript
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any, Dict, Optional
 
     from gt4py.cartesian import StencilObject
 
@@ -43,7 +43,7 @@ def stencil_collection(name: str):
 def compile_stencil(
     name: str,
     gt4py_config: GT4PyConfig,
-    externals: Dict[str, Any] = None,
+    externals: Optional[Dict[str, Any]] = None,
 ) -> StencilObject:
     """Automate and customize the compilation of GT4Py stencils."""
     stencil_info = STENCIL_COLLECTION.get(name, None)
@@ -52,15 +52,15 @@ def compile_stencil(
     definition = stencil_info["definition"]
 
     dtypes = gt4py_config.dtypes.dict()
-    dtypes[float] = gt4py_config.dtypes.float
-    dtypes[int] = gt4py_config.dtypes.int
+    dtypes[float] = gt4py_config.dtypes.float  # type: ignore[index]
+    dtypes[int] = gt4py_config.dtypes.int  # type: ignore[index]
     externals = externals or {}
 
     kwargs = gt4py_config.backend_opts.copy()
     if gt4py_config.backend not in ("debug", "numpy", "gtc:numpy"):
         kwargs["verbose"] = gt4py_config.verbose
 
-    return gtscript.stencil(
+    return gtscript.stencil(  # type: ignore[no-any-return]
         gt4py_config.backend,
         definition,
         name=name,

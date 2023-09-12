@@ -8,21 +8,22 @@ import gt4py
 from sympl._core.data_array import DataArray
 
 if TYPE_CHECKING:
+    from collections.abc import Hashable
     from typing import Dict, List, Literal, Optional, Tuple
 
     from ifs_physics_common.framework.config import GT4PyConfig
     from ifs_physics_common.framework.grid import ComputationalGrid, DimSymbol
-    from ifs_physics_common.utils.typingx import Storage
+    from ifs_physics_common.utils.typingx import ArrayLike
 
 
 def zeros(
     computational_grid: ComputationalGrid,
-    grid_id: Tuple[DimSymbol, ...],
+    grid_id: Hashable,
     data_shape: Optional[Tuple[int, ...]] = None,
     *,
     gt4py_config: GT4PyConfig,
     dtype: Literal["bool", "float", "int"],
-) -> Storage:
+) -> ArrayLike:
     """
     Create an array defined over the grid ``grid_id`` of ``computational_grid``
     and fill it with zeros.
@@ -37,7 +38,7 @@ def zeros(
 
 
 def get_data_array(
-    buffer: Storage,
+    buffer: ArrayLike,
     computational_grid: ComputationalGrid,
     grid_id: Tuple[DimSymbol, ...],
     units: str,
@@ -73,7 +74,7 @@ def allocate_data_array(
     return get_data_array(buffer, computational_grid, grid_id, units, data_dims=data_dims)
 
 
-def get_dtype_from_name(field_name: str) -> str:
+def get_dtype_from_name(field_name: str) -> Literal["bool", "float", "int"]:
     """
     Retrieve the datatype of a field from its name.
 
@@ -102,7 +103,7 @@ def get_data_shape_from_name(field_name: str) -> Tuple[int, ...]:
     return out
 
 
-TEMPORARY_STORAGE_POOL: Dict[int, List[Storage]] = {}
+TEMPORARY_STORAGE_POOL: Dict[int, List[ArrayLike]] = {}
 
 
 @contextmanager

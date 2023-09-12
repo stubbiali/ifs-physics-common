@@ -14,7 +14,7 @@ class timing:
 
     def __enter__(self) -> Type[Timer]:
         Timer.start(self.label)
-        return Timer
+        return Timer  # type: ignore[no-any-return]
 
     def __exit__(self, exc_type, exc_value, exc_tb) -> None:
         Timer.stop()

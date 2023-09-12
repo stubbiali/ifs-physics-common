@@ -63,10 +63,24 @@ exclude = '''
 '''
 
 [tool.mypy]
+plugins = 'numpy.typing.mypy_plugin'
 python_version = '3.9'
 warn_return_any = true
 warn_unused_configs = true
 warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = 'cupy'
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = 'sympl.*'
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = 'gt4py.next.*'
+follow_imports = 'skip'
+ignore_missing_imports = true
 
 [tool.setuptools]
 platforms = ['Linux', 'Mac']

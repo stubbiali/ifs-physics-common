@@ -5,7 +5,8 @@ import numpy as np
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Dict, Tuple
+    from collections.abc import Hashable
+    from typing import Dict, Optional, Tuple
 
 
 class DimSymbol:
@@ -50,7 +51,10 @@ class Grid:
     """Grid of points."""
 
     def __init__(
-        self, shape: Tuple[int, ...], dims: Tuple[str, ...], storage_shape: Tuple[int, ...] = None
+        self,
+        shape: Tuple[int, ...],
+        dims: Tuple[str, ...],
+        storage_shape: Optional[Tuple[int, ...]] = None,
     ) -> None:
         assert len(shape) == len(dims)
         self.shape = shape
@@ -65,7 +69,7 @@ class Grid:
 class ComputationalGrid:
     """A three-dimensional computational grid consisting of mass and staggered grid points."""
 
-    grids: Dict[Tuple[DimSymbol, ...], Grid]
+    grids: Dict[Hashable, Grid]
 
     def __init__(self, nx: int, ny: int, nz: int) -> None:
         self.grids = {

@@ -9,17 +9,20 @@ except ImportError:
     cp = np
 
 if TYPE_CHECKING:
-    from ifs_physics_common.utils.typingx import Storage
+    from numpy.typing import NDArray
+
+    from ifs_physics_common.utils.typingx import ArrayLike
 
 
-def to_numpy(storage: Storage) -> np.ndarray:
+def to_numpy(storage: ArrayLike) -> NDArray:
     try:
-        return storage.get()
+        # storage is a cupy array
+        return storage.get()  # type: ignore[no-any-return, union-attr]
     except AttributeError:
-        return storage
+        return np.array(storage, copy=False)
 
 
-def assign(lhs: Storage, rhs: Storage) -> None:
+def assign(lhs: ArrayLike, rhs: ArrayLike) -> None:
     if isinstance(lhs, cp.ndarray) and isinstance(rhs, np.ndarray):
         lhs[...] = cp.asarray(rhs)
     elif isinstance(lhs, np.ndarray) and isinstance(rhs, cp.ndarray):
