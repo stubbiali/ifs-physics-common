@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from gt4py.cartesian import gtscript
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from typing import Any, Dict, Optional
 
     from gt4py.cartesian import StencilObject
@@ -16,24 +17,24 @@ FUNCTION_COLLECTION = {}
 STENCIL_COLLECTION = {}
 
 
-def function_collection(name: str):
+def function_collection(name: str) -> Callable[[Callable], Callable]:
     """Decorator for GT4Py functions."""
     if name in FUNCTION_COLLECTION:
         raise RuntimeError(f"Another function called `{name}` found.")
 
-    def core(definition):
+    def core(definition: Callable) -> Callable:
         FUNCTION_COLLECTION[name] = {"definition": definition}
         return definition
 
     return core
 
 
-def stencil_collection(name: str):
+def stencil_collection(name: str) -> Callable[[Callable], Callable]:
     """Decorator for GT4Py stencil definitions."""
     if name in STENCIL_COLLECTION:
         raise RuntimeError(f"Another stencil called `{name}` found.")
 
-    def core(definition):
+    def core(definition: Callable) -> Callable:
         STENCIL_COLLECTION[name] = {"definition": definition}
         return definition
 

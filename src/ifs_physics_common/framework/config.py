@@ -30,7 +30,7 @@ class GT4PyConfig(BaseModel):
     build_info: Optional[Dict[str, Any]] = None
     device_sync: bool = True
     dtypes: DataTypes = DataTypes(bool=bool, float=float, int=int)
-    exec_info: Optional[Dict[str, Any]] = None
+    exec_info: Dict[str, Any] = {}
     managed: Union[bool, str] = "gt4py"
     rebuild: bool = False
     validate_args: bool = False
@@ -42,7 +42,7 @@ class GT4PyConfig(BaseModel):
         v = v or {}
         return {**v, "__aggregate_data": True}
 
-    def reset_exec_info(self):
+    def reset_exec_info(self) -> None:
         self.exec_info = {"__aggregate_data": self.exec_info.get("__aggregate_data", True)}
 
     def with_backend(self, backend: Optional[str]) -> GT4PyConfig:

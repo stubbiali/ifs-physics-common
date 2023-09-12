@@ -8,7 +8,7 @@ import gt4py
 from sympl._core.data_array import DataArray
 
 if TYPE_CHECKING:
-    from collections.abc import Hashable
+    from collections.abc import Hashable, Iterator
     from typing import Dict, List, Literal, Optional, Tuple
 
     from ifs_physics_common.framework.config import GT4PyConfig
@@ -111,7 +111,7 @@ def managed_temporary_storage(
     computational_grid: ComputationalGrid,
     *args: Tuple[Tuple[DimSymbol, ...], Literal["bool", "float", "int"]],
     gt4py_config: GT4PyConfig,
-):
+) -> Iterator[ArrayLike]:
     """
     Get temporary storages defined over the grids of ``computational_grid``.
 
@@ -145,7 +145,7 @@ def managed_temporary_storage(
 
 
 @contextmanager
-def managed_temporary_storage_pool():
+def managed_temporary_storage_pool() -> Iterator[None]:
     """
     Clear the pool of temporary storages ``TEMPORARY_STORAGE_POOL`` on entry and exit.
 
