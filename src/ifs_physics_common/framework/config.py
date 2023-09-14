@@ -77,12 +77,21 @@ class PythonConfig(BaseModel):
 
     # run
     num_runs: int
+    num_threads: int = -1
 
     # low-level and/or backend-related
     precision: Literal["double", "single"]
     data_types: DataTypes
     gt4py_config: GT4PyConfig
     sympl_enable_checks: bool
+
+    @validator("num_threads", always=True)
+    @classmethod
+    def set_num_threads(cls, v: int) -> int:
+        if v <= 0:
+            return int(os.environ.get("OMP_NUM_THREADS", 1))
+        else:
+            return v
 
     @validator("gt4py_config")
     @classmethod
