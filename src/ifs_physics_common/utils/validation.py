@@ -11,10 +11,10 @@ if TYPE_CHECKING:
     from sympl._core.data_array import DataArray
     from sympl._core.typingx import DataArrayDict
 
-    from ifs_physics_common.utils.typingx import ArrayLike
+    from ifs_physics_common.utils.typingx import NDArrayLike
 
 
-def validate_storage_2d(src: ArrayLike, trg: ArrayLike) -> bool:
+def validate_storage_2d(src: NDArrayLike, trg: NDArrayLike) -> bool:
     src_np = to_numpy(src)
     trg_np = to_numpy(trg)
     mi = min(src_np.shape[0], trg_np.shape[0])
@@ -22,7 +22,7 @@ def validate_storage_2d(src: ArrayLike, trg: ArrayLike) -> bool:
     return np.allclose(src_np[:mi, :mj], trg_np[:mi, :mj], atol=1e-18, rtol=1e-12)
 
 
-def validate_storage_3d(src: ArrayLike, trg: ArrayLike) -> bool:
+def validate_storage_3d(src: NDArrayLike, trg: NDArrayLike) -> bool:
     src_np = to_numpy(src)
     trg_np = to_numpy(trg)
     mi = min(src_np.shape[0], trg_np.shape[0])

@@ -11,10 +11,10 @@ except ImportError:
 if TYPE_CHECKING:
     from numpy.typing import NDArray
 
-    from ifs_physics_common.utils.typingx import ArrayLike
+    from ifs_physics_common.utils.typingx import NDArrayLike
 
 
-def to_numpy(storage: ArrayLike) -> NDArray:
+def to_numpy(storage: NDArrayLike) -> NDArray:
     try:
         # storage is a cupy array
         return storage.get()  # type: ignore[no-any-return, union-attr]
@@ -22,7 +22,7 @@ def to_numpy(storage: ArrayLike) -> NDArray:
         return np.array(storage, copy=False)
 
 
-def assign(lhs: ArrayLike, rhs: ArrayLike) -> None:
+def assign(lhs: NDArrayLike, rhs: NDArrayLike) -> None:
     if isinstance(lhs, cp.ndarray) and isinstance(rhs, np.ndarray):
         lhs[...] = cp.asarray(rhs)
     elif isinstance(lhs, np.ndarray) and isinstance(rhs, cp.ndarray):

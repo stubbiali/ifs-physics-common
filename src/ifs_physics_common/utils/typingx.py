@@ -12,10 +12,10 @@ except ImportError:
     cp = np
 
 
-ArrayLike = Union[npt.NDArray, cp.ndarray]
-ArrayLikeDict = Dict[str, ArrayLike]
 DataArray: TypeAlias = SymplDataArray
 DataArrayDict: TypeAlias = SymplDataArrayDict
+NDArrayLike = Union[npt.NDArray, cp.ndarray]
+NDArrayLikeDict = Dict[str, NDArrayLike]
 ParameterDict = Dict[str, Union[bool, float, int]]
 Property = Dict[str, Union[str, Sequence[str], Hashable]]
 PropertyDict = Dict[str, Property]

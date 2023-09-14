@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
     from ifs_physics_common.framework.config import GT4PyConfig
     from ifs_physics_common.framework.grid import ComputationalGrid, DimSymbol
-    from ifs_physics_common.utils.typingx import ArrayLike
+    from ifs_physics_common.utils.typingx import NDArrayLike
 
 
 def zeros(
@@ -23,7 +23,7 @@ def zeros(
     *,
     gt4py_config: GT4PyConfig,
     dtype: Literal["bool", "float", "int"],
-) -> ArrayLike:
+) -> NDArrayLike:
     """
     Create an array defined over the grid ``grid_id`` of ``computational_grid``
     and fill it with zeros.
@@ -38,7 +38,7 @@ def zeros(
 
 
 def get_data_array(
-    buffer: ArrayLike,
+    buffer: NDArrayLike,
     computational_grid: ComputationalGrid,
     grid_id: Tuple[DimSymbol, ...],
     units: str,
@@ -103,7 +103,7 @@ def get_data_shape_from_name(field_name: str) -> Tuple[int, ...]:
     return out
 
 
-TEMPORARY_STORAGE_POOL: Dict[int, List[ArrayLike]] = {}
+TEMPORARY_STORAGE_POOL: Dict[int, List[NDArrayLike]] = {}
 
 
 @contextmanager
@@ -111,7 +111,7 @@ def managed_temporary_storage(
     computational_grid: ComputationalGrid,
     *args: Tuple[Tuple[DimSymbol, ...], Literal["bool", "float", "int"]],
     gt4py_config: GT4PyConfig,
-) -> Iterator[ArrayLike]:
+) -> Iterator[NDArrayLike]:
     """
     Get temporary storages defined over the grids of ``computational_grid``.
 
