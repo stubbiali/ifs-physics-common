@@ -6,7 +6,7 @@ import os
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Literal, Optional, Sequence, Tuple
+    from typing import Any, Dict, Literal, Optional, Sequence, Tuple
 
 
 def to_csv(
@@ -59,6 +59,53 @@ def to_csv(
                 runtime_stddev,
                 mflops_mean,
                 mflops_stddev,
+            )
+        )
+
+
+def to_csv_stencils(
+    output_file: str,
+    host_name: str,
+    precision: Literal["double", "single"],
+    variant: str,
+    num_cols: int,
+    num_threads: int,
+    num_runs: int,
+    exec_info: Dict[str, Any],
+    key_patterns: Sequence[str],
+) -> None:
+    call_time = 0.0
+    for key, value in exec_info.items():
+        if any(key_pattern in key for key_pattern in key_patterns):
+            call_time += value["total_call_time"] * 1000 / num_runs
+
+    if not os.path.exists(output_file):
+        with open(output_file, "w") as f:
+            writer = csv.writer(f, delimiter=",")
+            writer.writerow(
+                (
+                    "date",
+                    "host",
+                    "precision",
+                    "variant",
+                    "num_cols",
+                    "num_runs",
+                    "num_threads",
+                    "stencils",
+                )
+            )
+    with open(output_file, "a") as f:
+        writer = csv.writer(f, delimiter=",")
+        writer.writerow(
+            (
+                datetime.date.today().strftime("%Y%m%d"),
+                host_name,
+                precision,
+                variant,
+                num_cols,
+                num_runs,
+                num_threads,
+                call_time,
             )
         )
 
