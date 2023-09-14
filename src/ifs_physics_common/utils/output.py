@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Literal, Optional, Sequence, Tuple
 
 
-def to_csv(
+def write_performance_to_csv(
     output_file: str,
     host_name: str,
     precision: Literal["double", "single"],
@@ -63,7 +63,7 @@ def to_csv(
         )
 
 
-def to_csv_stencils(
+def write_stencils_performance_to_csv(
     output_file: str,
     host_name: str,
     precision: Literal["double", "single"],
