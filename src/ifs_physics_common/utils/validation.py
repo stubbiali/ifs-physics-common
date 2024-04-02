@@ -16,48 +16,68 @@
 
 from __future__ import annotations
 import numpy as np
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
+import warnings
 
 from ifs_physics_common.utils.numpyx import to_numpy
 
 if TYPE_CHECKING:
+    from numpy.typing import NDArray
     from typing import Tuple
 
-    from sympl._core.data_array import DataArray
     from sympl._core.typingx import DataArrayDict
 
     from ifs_physics_common.utils.typingx import NDArrayLike
 
 
-def validate_storage_2d(src: NDArrayLike, trg: NDArrayLike) -> bool:
-    src_np = to_numpy(src)
-    trg_np = to_numpy(trg)
-    mi = min(src_np.shape[0], trg_np.shape[0])
-    mj = min(src_np.shape[1], trg_np.shape[1])
-    return np.allclose(src_np[:mi, :mj], trg_np[:mi, :mj], atol=1e-18, rtol=1e-12)
+DEFAULT_ATOL: float = 1e-18
+DEFAULT_RTOL: float = 1e-12
 
 
-def validate_storage_3d(src: NDArrayLike, trg: NDArrayLike) -> bool:
-    src_np = to_numpy(src)
-    trg_np = to_numpy(trg)
-    mi = min(src_np.shape[0], trg_np.shape[0])
-    mj = min(src_np.shape[1], trg_np.shape[1])
-    mk = min(src_np.shape[2], trg_np.shape[2])
-    return np.allclose(src_np[:mi, :mj, :mk], trg_np[:mi, :mj, :mk], atol=1e-18, rtol=1e-12)
+def get_storages_for_validation(
+    field_a: NDArrayLike, field_b: NDArrayLike
+) -> Tuple[NDArray, NDArray]:
+    a_np = to_numpy(field_a)
+    b_np = to_numpy(field_b)
+    slc = tuple(slice(0, min(s_src, s_trg)) for s_src, s_trg in zip(a_np.shape, b_np.shape))
+    return a_np[slc], b_np[slc]
 
 
-def validate_field(src: DataArray, trg: DataArray) -> bool:
-    if src.ndim == 2:
-        return validate_storage_2d(src.data, trg.data)
-    elif src.ndim == 3:
-        return validate_storage_3d(src.data, trg.data)
-    else:
-        raise ValueError("The field to validate must be either 2-d or 3-d.")
+def validate(
+    src: DataArrayDict,
+    trg: DataArrayDict,
+    atol: Optional[float] = None,
+    rtol: Optional[float] = None,
+) -> None:
+    common_keys = set(src.keys()).intersection(set(trg.keys()))
+    for key in common_keys:
+        src_field, trg_field = get_storages_for_validation(src[key], trg[key])
+        assert src_field.shape == trg_field.shape
 
+        if src_field.dtype.kind == "b":
+            src_field = src_field.astype(float)
+        if trg_field.dtype.kind == "b":
+            trg_field = trg_field.astype(float)
 
-def validate(src: DataArrayDict, trg: DataArrayDict) -> Tuple[str, ...]:
-    return tuple(
-        name
-        for name in src
-        if name in trg and name != "time" and not validate_field(src[name], trg[name])
-    )
+        # remove nan's and inf's
+        src_field = np.where(np.isnan(src_field), 0, src_field)
+        src_field = np.where(np.isinf(src_field), 0, src_field)
+        trg_field = np.where(np.isnan(trg_field), 0, trg_field)
+        trg_field = np.where(np.isinf(trg_field), 0, trg_field)
+
+        abs_diff = np.abs(src_field - trg_field)
+        abs_diff_max = abs_diff.max()
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore")
+            rel_diff = abs_diff / np.abs(trg_field)
+        rel_diff_max = np.where(trg_field != 0, rel_diff, 0).max()
+
+        atol = atol or DEFAULT_ATOL
+        rtol = rtol or DEFAULT_RTOL
+        allclose = np.allclose(src_field, trg_field, atol=atol, rtol=rtol, equal_nan=True)
+        print(
+            f"   - {key:20s}:"
+            f"\033[9{2 if abs_diff_max < atol else 1}m max abs diff = {abs_diff_max:.5E}\033[00m,"
+            f"\033[9{2 if rel_diff_max < rtol else 1}m max rel diff = {rel_diff_max:.5E}\033[00m,"
+            f"\033[9{2 if allclose else 1}m allclose = {allclose}\033[00m"
+        )

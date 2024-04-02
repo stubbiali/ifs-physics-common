@@ -130,19 +130,21 @@ def print_performance(
 ) -> Tuple[float, float, float, float]:
     """Print means and standard deviation of runtimes and MFLOPS."""
     n = len(runtime_l)
-    print(f"Performance over {num_cols} columns and {n} runs:")
+    print(f"== Performance:")
+    print(f"   - Number of columns: {num_cols}")
+    print(f"   - Number of runs: {n}")
 
     runtime_mean = sum(runtime_l) / n
     runtime_stddev = (
         sum((runtime - runtime_mean) ** 2 for runtime in runtime_l) / (n - 1 if n > 1 else n)
     ) ** 0.5
-    print(f"-  Runtime: {runtime_mean:.3f} \u00B1 {runtime_stddev:.3f} ms.")
+    print(f"   - Runtime: {runtime_mean:.3f} \u00B1 {runtime_stddev:.3f} ms")
 
     mflops_l = mflops_l or [0.12482329 * num_cols / (runtime / 1000) for runtime in runtime_l]
     mflops_mean = sum(mflops_l) / n
     mflops_stddev = (
         sum((mflops - mflops_mean) ** 2 for mflops in mflops_l) / (n - 1 if n > 1 else n)
     ) ** 0.5
-    print(f"-  MFLOPS: {mflops_mean:.3f} \u00B1 {mflops_stddev:.3f}.")
+    print(f"   - MFLOPS: {mflops_mean:.3f} \u00B1 {mflops_stddev:.3f}")
 
     return runtime_mean, runtime_stddev, mflops_mean, mflops_stddev
