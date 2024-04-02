@@ -2,6 +2,8 @@
 
 ## Installation
 
+The code is bundled as the installable package `ifs_physics_common`. We recommend installing the package in an isolated virtual environment:
+
 ```shell
 # create a dedicated virtual environment
 $ python -m venv venv
