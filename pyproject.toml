@@ -3,7 +3,7 @@ build-backend = 'setuptools.build_meta'
 requires = ['setuptools>=65.5.0', 'wheel']
 
 [project]
-authors = [{name = 'ETH Zurich', email = 'subbiali@phys.ethz.ch'}]
+authors = [{name = 'Stefano Ubbiali', email = 'subbiali@phys.ethz.ch'}]
 classifiers = [
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Science/Research',
@@ -14,8 +14,7 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Atmospheric Science',
 ]
 dependencies = [
-    # install from source for better typing
-    'gt4py[dace] @ git+https://github.com/stubbiali/gt4py.git@pmap-custom',
+    'gt4py[dace] @ git+https://github.com/GridTools/gt4py.git@main',
     'numpy>=1.21',
     'pydantic>=1.9',
     'sympl @ git+https://github.com/stubbiali/sympl.git@oop'
@@ -25,7 +24,7 @@ keywords = [
     'framework',
     'physical parameterizations',
 ]
-#license = {text = 'Apache-2'}  # to be sorted out
+license = {file = 'LICENSE.md', content-type = 'text/markdown'}  # to be sorted out
 name = 'ifs_physics_common'
 readme = {file = 'README.md', content-type = 'text/markdown'}
 requires-python = '>=3.8'
@@ -33,6 +32,10 @@ version = '0.0'
 
 [project.optional-dependencies]
 dev = ['black>=22.6.0', 'flake8', 'ipdb', 'ipython', 'mypy', 'pre-commit']
+gpu = ['cupy']
+gpu-cuda11x = ['cupy-cuda11x']
+gpu-cuda12x = ['cupy-cuda12x']
+gpu-rocm = ['cython<3.0', 'cupy<13.0']
 
 [project.urls]
 Source = 'https://github.com/stubbiali/ifs_physics_common.git'
