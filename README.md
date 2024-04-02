@@ -2,26 +2,24 @@
 
 ## Installation
 
-We suggest installing the Python package `ifs_physics_common` within an isolated virtual environment:
-
 ```shell
-# create virtual environment under `venv/`
+# create a dedicated virtual environment
 $ python -m venv venv
 
 # activate the virtual environment
-$ . venv/bin/activate
+$ source venv/bin/activate
 
-# upgrade base packages
-(venv) $ pip install --upgrade pip setuptools wheel
+# upgrade basic packages
+$ (venv) pip install --upgrade pip setuptools wheel
+
+# install ifs_physics_common in editable mode
+$ (venv) pip install -e .[<optional-dependencies>]
 ```
 
-The package can be installed using the Python package manager [pip](https://pip.pypa.io/en/stable/):
+`<optional-dependencies>` can be one of the following strings, or a comma-separated list of them:
 
-```shell
-# install ifs_physics_common along with the minimal set of requirements
-(venv) $ pip install .
-
-# create a fully reproducible development environment with an editable installation of cloudsc4py
-(venv) $ pip install -r requirements-dev.txt
-(venv) $ pip install -e .
-```
+* `dev`: get a full-fledged development installation;
+* `gpu`: enable GPU support by installing CuPy from source;
+* `gpu-cuda11x`: enable GPU support for NVIDIA GPUs using CUDA 11.x;
+* `gpu-cuda12x`: enable GPU support for NVIDIA GPUs using CUDA 12.x;
+* `gpu-rocm`: enable GPU support for AMD GPUs using ROCm.
