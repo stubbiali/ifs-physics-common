@@ -29,8 +29,8 @@ except ImportError:
 
 DataArray: TypeAlias = SymplDataArray
 DataArrayDict: TypeAlias = SymplDataArrayDict
-NDArray = Union[npt.NDArray, cp.ndarray]
-NDArrayDict = Dict[str, NDArray]
+NDArrayLike = Union[npt.NDArray, cp.ndarray]
+NDArrayLikeDict = Dict[str, NDArrayLike]
 ParameterDict = Dict[str, Union[bool, float, int]]
 Property = Dict[str, Union[str, Sequence[str], Hashable]]
 PropertyDict = Dict[str, Property]
