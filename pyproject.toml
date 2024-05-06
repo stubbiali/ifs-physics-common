@@ -27,7 +27,7 @@ keywords = [
     'framework',
     'physical parameterizations',
 ]
-license = {file = 'LICENSE.md', content-type = 'text/markdown'}  # to be sorted out
+license = {file = 'LICENSE.md', content-type = 'text/markdown'}
 name = 'ifs_physics_common'
 readme = {file = 'README.md', content-type = 'text/markdown'}
 requires-python = '>=3.8'
