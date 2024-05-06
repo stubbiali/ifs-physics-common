@@ -14,7 +14,8 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Atmospheric Science',
 ]
 dependencies = [
-    'gt4py[dace] @ git+https://github.com/GridTools/gt4py.git@main',
+    # note(stubbiali): specify commit hash until #1462 is available in a public release
+    'gt4py[dace] @ git+https://github.com/GridTools/gt4py.git@2cd0c91',
     'numpy>=1.21',
     'pydantic>=1.9',
     'sympl @ git+https://github.com/stubbiali/sympl.git@oop'
@@ -31,7 +32,14 @@ requires-python = '>=3.8'
 version = '0.0'
 
 [project.optional-dependencies]
-dev = ['black>=22.6.0', 'flake8', 'ipdb', 'ipython', 'mypy', 'pre-commit']
+dev = [
+    'black==24.4.0',  # note(stubbiali): coherent with corresponding pre-commit hook
+    'flake8',
+    'ipdb',
+    'ipython==8.22.0',  # note(stubbiali): required to make ipdb work
+    'mypy',
+    'pre-commit',
+]
 gpu = ['cupy']
 gpu-cuda11x = ['cupy-cuda11x']
 gpu-cuda12x = ['cupy-cuda12x']
