@@ -46,7 +46,7 @@ def validate(
     atol: Optional[float] = None,
     rtol: Optional[float] = None,
 ) -> None:
-    common_keys = set(src.keys()).intersection(set(trg.keys()))
+    common_keys = sorted(set(src.keys()).intersection(set(trg.keys())))
     for key in common_keys:
         src_field, trg_field = get_storages_for_validation(src[key], trg[key])
         assert src_field.shape == trg_field.shape
