@@ -25,20 +25,17 @@ if TYPE_CHECKING:
     from numpy.typing import NDArray
     from typing import Tuple
 
+    from sympl._core.data_array import DataArray
     from sympl._core.typingx import DataArrayDict
-
-    from ifs_physics_common.utils.typingx import NDArrayLike
 
 
 DEFAULT_ATOL: float = 1e-18
 DEFAULT_RTOL: float = 1e-12
 
 
-def get_storages_for_validation(
-    field_a: NDArrayLike, field_b: NDArrayLike
-) -> Tuple[NDArray, NDArray]:
-    a_np = to_numpy(field_a)
-    b_np = to_numpy(field_b)
+def get_storages_for_validation(field_a: DataArray, field_b: DataArray) -> Tuple[NDArray, NDArray]:
+    a_np = to_numpy(field_a.data[...])
+    b_np = to_numpy(field_b.data[...])
     slc = tuple(slice(0, min(s_src, s_trg)) for s_src, s_trg in zip(a_np.shape, b_np.shape))
     return a_np[slc], b_np[slc]
 
