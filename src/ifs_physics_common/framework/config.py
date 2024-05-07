@@ -89,6 +89,8 @@ class PythonConfig(BaseModel):
     enable_validation: bool
     input_file: str
     reference_file: str
+    atol: Optional[float] = None
+    rtol: Optional[float] = None
 
     # run
     num_runs: int
@@ -144,9 +146,13 @@ class PythonConfig(BaseModel):
         args["data_types"] = self.data_types.with_precision(precision)
         return PythonConfig(**args)
 
-    def with_validation(self, enabled: bool) -> PythonConfig:
+    def with_validation(
+        self, enabled: bool, atol: Optional[float] = None, rtol: Optional[float] = None
+    ) -> PythonConfig:
         args = self.dict()
         args["enable_validation"] = enabled
+        args["atol"] = atol
+        args["rtol"] = rtol
         return PythonConfig(**args)
 
 
