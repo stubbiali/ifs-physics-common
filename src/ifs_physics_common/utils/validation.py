@@ -40,6 +40,44 @@ def get_storages_for_validation(field_a: DataArray, field_b: DataArray) -> Tuple
     return a_np[slc], b_np[slc]
 
 
+def validate_field(
+    name,
+    src_field: NDArray,
+    trg_field: NDArray,
+    atol: Optional[float] = None,
+    rtol: Optional[float] = None,
+) -> None:
+    assert src_field.shape == trg_field.shape
+
+    if src_field.dtype.kind == "b":
+        src_field = src_field.astype(float)
+    if trg_field.dtype.kind == "b":
+        trg_field = trg_field.astype(float)
+
+    # remove nan's and inf's
+    src_field = np.where(np.isnan(src_field), 0, src_field)
+    src_field = np.where(np.isinf(src_field), 0, src_field)
+    trg_field = np.where(np.isnan(trg_field), 0, trg_field)
+    trg_field = np.where(np.isinf(trg_field), 0, trg_field)
+
+    abs_diff = np.abs(src_field - trg_field)
+    abs_diff_max = abs_diff.max()
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore")
+        rel_diff = abs_diff / np.abs(trg_field)
+    rel_diff_max = np.where(trg_field != 0, rel_diff, 0).max()
+
+    atol = atol or DEFAULT_ATOL
+    rtol = rtol or DEFAULT_RTOL
+    allclose = np.allclose(src_field, trg_field, atol=atol, rtol=rtol, equal_nan=True)
+    print(
+        f"   - {name:20s}:"
+        f"\033[9{2 if abs_diff_max < atol else 1}m max abs diff = {abs_diff_max:.5E}\033[00m,"
+        f"\033[9{2 if rel_diff_max < rtol else 1}m max rel diff = {rel_diff_max:.5E}\033[00m,"
+        f"\033[9{2 if allclose else 1}m allclose = {allclose}\033[00m"
+    )
+
+
 def validate(
     src: DataArrayDict,
     trg: DataArrayDict,
@@ -49,32 +87,4 @@ def validate(
     common_keys = sorted(set(src.keys()).intersection(set(trg.keys())))
     for key in common_keys:
         src_field, trg_field = get_storages_for_validation(src[key], trg[key])
-        assert src_field.shape == trg_field.shape
-
-        if src_field.dtype.kind == "b":
-            src_field = src_field.astype(float)
-        if trg_field.dtype.kind == "b":
-            trg_field = trg_field.astype(float)
-
-        # remove nan's and inf's
-        src_field = np.where(np.isnan(src_field), 0, src_field)
-        src_field = np.where(np.isinf(src_field), 0, src_field)
-        trg_field = np.where(np.isnan(trg_field), 0, trg_field)
-        trg_field = np.where(np.isinf(trg_field), 0, trg_field)
-
-        abs_diff = np.abs(src_field - trg_field)
-        abs_diff_max = abs_diff.max()
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore")
-            rel_diff = abs_diff / np.abs(trg_field)
-        rel_diff_max = np.where(trg_field != 0, rel_diff, 0).max()
-
-        atol = atol or DEFAULT_ATOL
-        rtol = rtol or DEFAULT_RTOL
-        allclose = np.allclose(src_field, trg_field, atol=atol, rtol=rtol, equal_nan=True)
-        print(
-            f"   - {key:20s}:"
-            f"\033[9{2 if abs_diff_max < atol else 1}m max abs diff = {abs_diff_max:.5E}\033[00m,"
-            f"\033[9{2 if rel_diff_max < rtol else 1}m max rel diff = {rel_diff_max:.5E}\033[00m,"
-            f"\033[9{2 if allclose else 1}m allclose = {allclose}\033[00m"
-        )
+        validate_field(key, src_field, trg_field, atol=atol, rtol=rtol)
