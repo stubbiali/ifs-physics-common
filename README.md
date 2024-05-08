@@ -1,4 +1,7 @@
-# `ifs_physics_common`: Infrastructure code and convenient utilities to implement IFS physical parameterizations in Python
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![DOI](https://zenodo.org/badge/648628474.svg)](https://zenodo.org/doi/10.5281/zenodo.11153741)
+
+# `ifs_physics_common`: Infrastructure code and convenient utilities to implement IFS physical parametrizations in Python
 
 ## Installation
 
