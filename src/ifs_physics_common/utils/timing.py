@@ -22,11 +22,10 @@ from sympl._core.time import Timer
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    from typing import Type
 
 
 @contextmanager
-def timing(label: str) -> Iterator[Type[Timer]]:
+def timing(label: str) -> Iterator[type[Timer]]:
     try:
         Timer.start(label)
         yield Timer

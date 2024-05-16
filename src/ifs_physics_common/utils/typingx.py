@@ -17,7 +17,7 @@
 from collections.abc import Hashable, Mapping, Sequence
 import numpy as np
 import numpy.typing as npt
-from typing import Dict, TypeAlias, TypeVar, Union
+from typing import TypeAlias, TypeVar, Union
 
 from sympl._core.typingx import DataArray as SymplDataArray, DataArrayDict as SymplDataArrayDict
 
@@ -30,8 +30,8 @@ except ImportError:
 DataArray: TypeAlias = SymplDataArray
 DataArrayDict: TypeAlias = SymplDataArrayDict
 NDArrayLike = Union[npt.NDArray, cp.ndarray]
-NDArrayLikeDict = Dict[str, NDArrayLike]
+NDArrayLikeDict = dict[str, NDArrayLike]
 ParameterDict = Mapping[str, Union[bool, float, int]]
-Property = Dict[str, Union[str, Sequence[str], Hashable]]
-PropertyDict = Dict[str, Property]
+Property = dict[str, Union[str, Sequence[str], Hashable]]
+PropertyDict = dict[str, Property]
 Range = TypeVar("Range")

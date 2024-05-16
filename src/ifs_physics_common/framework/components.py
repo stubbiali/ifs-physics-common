@@ -17,7 +17,7 @@
 from __future__ import annotations
 from abc import abstractmethod
 from functools import cached_property
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from sympl._core.core_components import (
     DiagnosticComponent as SymplDiagnosticComponent,
@@ -33,7 +33,7 @@ from ifs_physics_common.framework.storage import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any, Optional
 
     from gt4py.cartesian import StencilObject
     from sympl._core.typingx import PropertyDict
@@ -50,7 +50,7 @@ class ComputationalGridComponent:
         self.gt4py_config = gt4py_config
 
     def compile_stencil(
-        self, name: str, externals: Optional[Dict[str, Any]] = None
+        self, name: str, externals: Optional[dict[str, Any]] = None
     ) -> StencilObject:
         return compile_stencil(name, self.gt4py_config, externals)
 

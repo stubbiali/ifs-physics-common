@@ -21,13 +21,13 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Hashable
-    from typing import Dict, Optional, Tuple
+    from typing import Optional
 
 
 class DimSymbol:
     """Symbol identifying a dimension, e.g. I or I-1/2."""
 
-    _instances: Dict[int, DimSymbol] = {}
+    _instances: dict[int, DimSymbol] = {}
 
     name: str
     offset: float
@@ -67,9 +67,9 @@ class Grid:
 
     def __init__(
         self,
-        shape: Tuple[int, ...],
-        dims: Tuple[str, ...],
-        storage_shape: Optional[Tuple[int, ...]] = None,
+        shape: tuple[int, ...],
+        dims: tuple[str, ...],
+        storage_shape: Optional[tuple[int, ...]] = None,
     ) -> None:
         assert len(shape) == len(dims)
         self.shape = shape
@@ -77,14 +77,14 @@ class Grid:
         self.storage_shape = storage_shape or self.shape
 
     @cached_property
-    def coords(self) -> Tuple[np.ndarray, ...]:
+    def coords(self) -> tuple[np.ndarray, ...]:
         return tuple(np.arange(size) for size in self.storage_shape)
 
 
 class ComputationalGrid:
     """A three-dimensional computational grid consisting of mass and staggered grid points."""
 
-    grids: Dict[Hashable, Grid]
+    grids: dict[Hashable, Grid]
 
     def __init__(self, nx: int, ny: int, nz: int) -> None:
         self.grids = {

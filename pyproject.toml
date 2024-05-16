@@ -30,7 +30,7 @@ keywords = [
 license = {file = 'LICENSE.md', content-type = 'text/markdown'}
 name = 'ifs_physics_common'
 readme = {file = 'README.md', content-type = 'text/markdown'}
-requires-python = '>=3.8'
+requires-python = '>=3.9'
 version = '0.0'
 
 [project.optional-dependencies]
