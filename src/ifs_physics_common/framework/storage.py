@@ -47,7 +47,7 @@ def zeros(
     """
     grid = computational_grid.grids[grid_id]
     data_shape = data_shape or ()
-    shape = grid.storage_shape + data_shape
+    shape = grid.get_storage_shape() + data_shape
     dtype = gt4py_config.dtypes.dict()[dtype]
     return gt4py.storage.zeros(shape, dtype, backend=gt4py_config.backend)
 
