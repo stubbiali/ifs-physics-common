@@ -117,18 +117,7 @@ def get_dtype_name(field_name: str) -> Literal["bool", "float", "int"]:
     elif field_name.startswith("i"):
         return "int"
     else:
-        raise RuntimeError(f"Cannot retrieve dtype for field `{field_name}`.")
-
-
-def get_data_shape_from_name(field_name: str) -> tuple[int, ...]:
-    """
-    Retrieve the data dimension of a field from its name.
-
-    Assume that the name of an n-dimensional field, with n > 1, is '{some_name}_n'.
-    """
-    data_dims = field_name.split("_", maxsplit=1)[0][1:]
-    out = tuple(int(c) for c in data_dims)
-    return out
+        raise RuntimeError(f"Cannot retrieve dtype for field {repr(field_name)}.")
 
 
 TEMPORARY_STORAGE_POOL: dict[int, list[NDArrayLike]] = {}
