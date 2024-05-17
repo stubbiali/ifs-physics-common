@@ -159,7 +159,7 @@ class Grid:
         return tuple(slice(o, o + s) for o, s in zip(origin, self.shape))
 
     def __repr__(self) -> str:
-        out = f"{self.ndim}-D grid with dimensions:\n"
+        out = f"{self.ndim}-D grid with dimensions: \n"
         for i in range(self.ndim):
             out += (
                 f"* {self.dims[i]}: size={self.shape[i]} spacing={self.spacing[i]} "
