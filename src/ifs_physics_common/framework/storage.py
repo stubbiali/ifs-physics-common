@@ -68,13 +68,13 @@ def get_data_array(
 
     dims = grid.dims + data_dims
     coords = grid.coords + tuple(np.arange(size) for size in data_shape)
-    origin = grid.get_storage_origin() + (0,) * data_ndim
+    view_shape = grid.shape + data_shape
     view_slice = grid.get_storage_view_slice() + tuple(slice(0, size) for size in data_shape)
     return DataArray(
         buffer,
         dims=dims,
         coords=coords,
-        attrs={"units": units, "origin": origin, "view_slice": view_slice},
+        attrs={"units": units, "view_shape": view_shape, "view_slice": view_slice},
     )
 
 
