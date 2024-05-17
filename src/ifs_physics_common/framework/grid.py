@@ -123,10 +123,13 @@ class ConcreteDim:
             return False
 
 
+DimTuple = tuple[Union[AbstractDim, ConcreteDim], ...]
+
+
 class Grid:
     """Grid of points."""
 
-    abstract_dims: tuple[AbstractDim, ...]
+    abstract_dims: DimTuple
     dims: tuple[str, ...]
     ndim: int
     padding: tuple[int, ...]
@@ -134,7 +137,7 @@ class Grid:
     spacing: tuple[float, ...]
     storage_shape: tuple[int, ...]
 
-    def __init__(self, abstract_dims: tuple[AbstractDim, ...], domain_config: DomainConfig) -> None:
+    def __init__(self, abstract_dims: DimTuple, domain_config: DomainConfig) -> None:
         self.abstract_dims = abstract_dims
         self.ndim = len(abstract_dims)
         self.dims = tuple(str(dim) for dim in abstract_dims)
@@ -173,12 +176,7 @@ class Grid:
 class ComputationalGrid:
     """A three-dimensional computational grid consisting of mass and staggered grid points."""
 
-    GRID_LOCATIONS: tuple[tuple[AbstractDim, ...], ...] = (
-        (I, J, K),
-        (I, J, K - 1 / 2),
-        (I, J),
-        (K,),
-    )
+    GRID_LOCATIONS: tuple[DimTuple, ...] = ((I, J, K), (I, J, K - 1 / 2), (I, J), (K,))
 
     grids: dict[Hashable, Grid]
 
