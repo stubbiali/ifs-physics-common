@@ -110,7 +110,7 @@ class ConcreteDim:
         if self.abstract_dim.offset == 0:
             coords = [self.bounds[0] + 1.5 * i * step for i in range(self.size)]
         else:
-            coords = [self.bounds[0] + i * step for i in range(self.size)]
+            coords = [self.bounds[0] + i * step for i in range(self.size + 1)]
         return np.array(coords)
 
     def __eq__(self, other: Union[AbstractDim, ConcreteDim]) -> bool:
