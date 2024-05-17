@@ -131,7 +131,7 @@ class Grid:
     ndim: int
     padding: tuple[int, ...]
     shape: tuple[int, ...]
-    spacings: tuple[float, ...]
+    spacing: tuple[float, ...]
     storage_shape: tuple[int, ...]
 
     def __init__(self, abstract_dims: tuple[AbstractDim, ...], domain_config: DomainConfig) -> None:
@@ -143,7 +143,7 @@ class Grid:
         self.shape = tuple(dim.size for dim in concrete_dims)
         self.coords = tuple(dim.coords for dim in concrete_dims)
         self.padding = tuple(dim.padding for dim in concrete_dims)
-        self.spacings = tuple(dim.spacing for dim in concrete_dims)
+        self.spacing = tuple(dim.spacing for dim in concrete_dims)
 
     @lru_cache
     def get_storage_shape(self):
@@ -157,7 +157,7 @@ class Grid:
         out = f"{self.ndim}-D grid with dimensions:\n"
         for i in range(self.ndim):
             out += (
-                f"* {self.dims[i]}: size={self.shape[i]} spacing={self.spacings[i]} "
+                f"* {self.dims[i]}: size={self.shape[i]} spacing={self.spacing[i]} "
                 f"padding={self.padding[i]}"
             )
             if i < self.ndim - 1:
