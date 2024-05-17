@@ -237,3 +237,15 @@ class IOConfig(BaseModel):
         args = self.dict()
         args["output_csv_file"] = output_csv_file
         return IOConfig(**args)
+
+
+class DomainConfig(BaseModel):
+    nx: int = 1
+    xmin: float = 0.0
+    xmax: float = 1.0
+    ny: int = 1
+    ymin: float = 0.0
+    ymax: float = 1.0
+    nz: int = 1
+    zmin: float = 0.0
+    zmax: float = 1.0
