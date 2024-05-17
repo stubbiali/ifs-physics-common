@@ -146,11 +146,11 @@ class Grid:
         self.spacing = tuple(dim.spacing for dim in concrete_dims)
 
     @lru_cache
-    def get_storage_shape(self):
+    def get_storage_shape(self) -> tuple[int, ...]:
         return tuple(s + abs(p) for s, p in zip(self.shape, self.padding))
 
     @lru_cache
-    def get_storage_origin(self):
+    def get_storage_origin(self) -> tuple[int, ...]:
         return tuple(max(-p, 0) for p in self.padding)
 
     def __repr__(self) -> str:
