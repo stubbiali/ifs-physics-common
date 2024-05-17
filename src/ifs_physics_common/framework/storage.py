@@ -22,6 +22,8 @@ from typing import TYPE_CHECKING
 import gt4py
 from sympl._core.data_array import DataArray
 
+from ifs_physics_common.utils.numpyx import assign
+
 if TYPE_CHECKING:
     from collections.abc import Hashable, Iterator
     from typing import Literal, Optional
@@ -100,6 +102,19 @@ def zeros(
         dtype_name=dtype_name,
     )
     return get_data_array(buffer, computational_grid, grid_id, units, data_dims=data_dims)
+
+
+def initialize_field(field: DataArray, buffer: NDArrayLike) -> None:
+    assert field.ndim == buffer.ndim
+    view_shape = field.attrs.get("view_shape", field.shape)
+    view_slice = field.attrs.get("view_slice", tuple(slice(0, None) for _ in range(field.ndim)))
+    buffer_slice = tuple(slice(0, view_size) for view_size in view_shape)
+    reps = tuple(
+        (view_size - 1) // buffer_size + 1
+        for view_size, buffer_size in zip(view_shape, buffer.shape)
+    )
+    buffer = np.tile(buffer, reps)
+    assign(field.data[view_slice], buffer[buffer_slice])
 
 
 def get_dtype_name(field_name: str) -> Literal["bool", "float", "int"]:
