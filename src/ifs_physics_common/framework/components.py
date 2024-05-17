@@ -86,11 +86,11 @@ class DiagnosticComponent(ComputationalGridComponent, SymplDiagnosticComponent):
 
     @cached_property
     def input_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._input_properties)
+        return self.fill_properties_with_dims(self.input_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _input_properties(self) -> PropertyDict:
+    def input_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of an input field, and the corresponding value is a
         dictionary specifying the units for that field ('units') and the identifier of the grid over
@@ -103,11 +103,11 @@ class DiagnosticComponent(ComputationalGridComponent, SymplDiagnosticComponent):
 
     @cached_property
     def diagnostic_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._diagnostic_properties)
+        return self.fill_properties_with_dims(self.diagnostic_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _diagnostic_properties(self) -> PropertyDict:
+    def diagnostic_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of a field diagnosed by the component, and the
         corresponding value is a dictionary specifying the units for that field ('units') and the
@@ -131,11 +131,11 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
 
     @cached_property
     def input_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._input_properties)
+        return self.fill_properties_with_dims(self.input_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _input_properties(self) -> PropertyDict:
+    def input_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of an input field, and the corresponding value is a
         dictionary specifying the units for that field ('units') and the identifier of the grid over
@@ -148,11 +148,11 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
 
     @cached_property
     def tendency_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._tendency_properties)
+        return self.fill_properties_with_dims(self.tendency_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _tendency_properties(self) -> PropertyDict:
+    def tendency_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of a tendency field computed by the component, and the
         corresponding value is a dictionary specifying the units for that field ('units') and the
@@ -165,11 +165,11 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
 
     @cached_property
     def diagnostic_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._diagnostic_properties)
+        return self.fill_properties_with_dims(self.diagnostic_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _diagnostic_properties(self) -> PropertyDict:
+    def diagnostic_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of a field diagnosed by the component, and the
         corresponding value is a dictionary specifying the units for that field ('units') and the
