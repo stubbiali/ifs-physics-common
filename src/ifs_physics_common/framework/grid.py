@@ -17,12 +17,11 @@
 from __future__ import annotations
 from functools import cached_property, lru_cache
 import numpy as np
-from typing import TYPE_CHECKING
+from typing import Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Hashable
     from numpy.typing import NDArray
-    from typing import Union
 
     from ifs_physics_common.framework.config import DomainConfig
 
