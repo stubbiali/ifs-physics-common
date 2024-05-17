@@ -31,13 +31,13 @@ if TYPE_CHECKING:
     from ifs_physics_common.utils.typingx import NDArrayLike
 
 
-def zeros(
+def gt_zeros(
     computational_grid: ComputationalGrid,
     grid_id: Hashable,
     data_shape: Optional[tuple[int, ...]] = None,
     *,
     gt4py_config: GT4PyConfig,
-    dtype: Literal["bool", "float", "int"],
+    dtype_name: Literal["bool", "float", "int"],
 ) -> NDArrayLike:
     """
     Create an array defined over the grid ``grid_id`` of ``computational_grid``
@@ -48,7 +48,7 @@ def zeros(
     grid = computational_grid.grids[grid_id]
     data_shape = data_shape or ()
     shape = grid.get_storage_shape() + data_shape
-    dtype = gt4py_config.dtypes.dict()[dtype]
+    dtype = gt4py_config.dtypes.dict()[dtype_name]
     return gt4py.storage.zeros(shape, dtype, backend=gt4py_config.backend)
 
 
@@ -78,7 +78,7 @@ def get_data_array(
     )
 
 
-def allocate_data_array(
+def zeros(
     computational_grid: ComputationalGrid,
     grid_id: tuple[DimSymbol, ...],
     units: str,
@@ -86,21 +86,25 @@ def allocate_data_array(
     data_dims: Optional[tuple[str, ...]] = None,
     *,
     gt4py_config: GT4PyConfig,
-    dtype: Literal["bool", "float", "int"],
+    dtype_name: Literal["bool", "float", "int"],
 ) -> DataArray:
     """
     Create a ``DataArray`` defined over the grid ``grid_id`` of ``computational_grid``
     and fill it with zeros.
     """
-    buffer = zeros(
-        computational_grid, grid_id, data_shape=data_shape, gt4py_config=gt4py_config, dtype=dtype
+    buffer = gt_zeros(
+        computational_grid,
+        grid_id,
+        data_shape=data_shape,
+        gt4py_config=gt4py_config,
+        dtype_name=dtype_name,
     )
     return get_data_array(buffer, computational_grid, grid_id, units, data_dims=data_dims)
 
 
-def get_dtype_from_name(field_name: str) -> Literal["bool", "float", "int"]:
+def get_dtype_name(field_name: str) -> Literal["bool", "float", "int"]:
     """
-    Retrieve the datatype of a field from its name.
+    Retrieve the datatype identifier of a field from the field name.
 
     Assume that the name of a bool field is of the form 'b_{some_name}',
     the name of a float field is of the form 'f_{some_name}',
