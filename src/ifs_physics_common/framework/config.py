@@ -17,7 +17,6 @@
 from __future__ import annotations
 import os
 import numpy as np
-from numpy.typing import DTypeLike
 from pydantic import BaseModel, validator
 import socket
 from typing import Any, Literal, Optional, Union
@@ -26,9 +25,9 @@ from typing import Any, Literal, Optional, Union
 class DataTypes(BaseModel):
     """Specify the datatypes for bool, float and integer fields."""
 
-    bool: DTypeLike
-    float: DTypeLike
-    int: DTypeLike
+    bool: type
+    float: type
+    int: type
 
     @staticmethod
     def with_precision(precision: Literal["double", "single"]) -> DataTypes:
