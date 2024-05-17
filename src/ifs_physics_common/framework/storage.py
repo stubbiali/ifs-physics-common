@@ -62,11 +62,20 @@ def get_data_array(
     """Create a ``DataArray`` out of ``buffer``."""
     grid = computational_grid.grids[grid_id]
     data_dims = data_dims or ()
+    data_ndim = len(data_dims)
+    data_shape = buffer.shape[grid.ndim :]
+    assert len(data_shape) == data_ndim
+
     dims = grid.dims + data_dims
-    coords = grid.coords + tuple(
-        np.arange(data_size) for data_size in buffer.shape[len(grid.dims) :]
+    coords = grid.coords + tuple(np.arange(size) for size in data_shape)
+    origin = grid.get_storage_origin() + (0,) * data_ndim
+    view_slice = grid.get_storage_view_slice() + tuple(slice(0, size) for size in data_shape)
+    return DataArray(
+        buffer,
+        dims=dims,
+        coords=coords,
+        attrs={"units": units, "origin": origin, "view_slice": view_slice},
     )
-    return DataArray(buffer, dims=dims, coords=coords, attrs={"units": units})
 
 
 def allocate_data_array(

@@ -153,6 +153,11 @@ class Grid:
     def get_storage_origin(self) -> tuple[int, ...]:
         return tuple(max(-p, 0) for p in self.padding)
 
+    @lru_cache
+    def get_storage_view_slice(self) -> tuple[slice, ...]:
+        origin = self.get_storage_origin()
+        return tuple(slice(o, o + s) for o, s in zip(origin, self.shape))
+
     def __repr__(self) -> str:
         out = f"{self.ndim}-D grid with dimensions:\n"
         for i in range(self.ndim):
