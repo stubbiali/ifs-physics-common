@@ -29,6 +29,9 @@ class DataTypes(BaseModel):
     float: type
     int: type
 
+    def from_name(self, name: Literal["bool", "float", "int"]) -> type:
+        return self.dict()[name]
+
     @staticmethod
     def with_precision(precision: Literal["double", "single"]) -> DataTypes:
         if precision == "double":
