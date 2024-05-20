@@ -26,7 +26,7 @@ from sympl._core.core_components import (
 
 from ifs_physics_common.framework.config import GT4PyConfig
 from ifs_physics_common.framework.stencil import compile_stencil
-from ifs_physics_common.framework.storage import get_dtype_name, gt_zeros
+from ifs_physics_common.framework.storage import gt_zeros
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -52,19 +52,19 @@ class ComputationalGridComponent:
 
     def fill_properties_with_dims(self, properties: PropertyDict) -> PropertyDict:
         for field_name, field_prop in properties.items():
-            assert "grid" in field_prop
-            dims = self.computational_grid.grids[field_prop["grid"]].dims
+            assert "grid_dims" in field_prop
+            dim_names = self.computational_grid.grids[field_prop["grid_dims"]].dim_names
             data_dims = field_prop.get("data_dims", ())
-            field_prop["dims"] = dims + data_dims
+            field_prop["dims"] = dim_names + tuple(str(dim) for dim in data_dims)
         return properties
 
     def allocate(self, name: str, properties: PropertyDict) -> NDArrayLike:
-        data_shape = properties.get("data_shape")
-        dtype_name = get_dtype_name(name)
+        data_dims = properties.get("data_dims", ())
+        dtype_name = properties.get("dtype_name", "float")
         return gt_zeros(
             self.computational_grid,
-            properties[name]["grid"],
-            data_shape=data_shape,
+            properties[name]["grid_dims"],
+            data_dims=data_dims,
             gt4py_config=self.gt4py_config,
             dtype_name=dtype_name,
         )
