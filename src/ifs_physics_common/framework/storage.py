@@ -22,21 +22,26 @@ from typing import TYPE_CHECKING
 import gt4py
 from sympl._core.data_array import DataArray
 
-from ifs_physics_common.utils.numpyx import assign
+from ifs_physics_common.utils import numpyx as npx
 
 if TYPE_CHECKING:
-    from collections.abc import Hashable, Iterator
+    from collections.abc import Iterator
     from typing import Literal, Optional
 
     from ifs_physics_common.framework.config import GT4PyConfig
-    from ifs_physics_common.framework.grid import ComputationalGrid, DimSymbol
+    from ifs_physics_common.framework.grid import (
+        AbstractGridDimTuple,
+        ComputationalGrid,
+        DataDimTuple,
+        DimTuple,
+    )
     from ifs_physics_common.utils.typingx import NDArrayLike
 
 
 def gt_zeros(
     computational_grid: ComputationalGrid,
-    grid_id: Hashable,
-    data_shape: Optional[tuple[int, ...]] = None,
+    grid_dims: AbstractGridDimTuple,
+    data_dims: Optional[DataDimTuple] = None,
     *,
     gt4py_config: GT4PyConfig,
     dtype_name: Literal["bool", "float", "int"],
@@ -47,34 +52,31 @@ def gt_zeros(
 
     Relying on GT4Py utilities to optimally allocate memory based on the chosen backend.
     """
-    grid = computational_grid.grids[grid_id]
-    data_shape = data_shape or ()
+    grid = computational_grid.grids[grid_dims]
+    data_dims = data_dims or ()
+    data_shape = tuple(dim.size for dim in data_dims)
     shape = grid.get_storage_shape() + data_shape
-    dtype = gt4py_config.dtypes.dict()[dtype_name]
+    dtype = gt4py_config.dtypes.from_name(dtype_name)
     return gt4py.storage.zeros(shape, dtype, backend=gt4py_config.backend)
 
 
 def get_data_array(
     buffer: NDArrayLike,
     computational_grid: ComputationalGrid,
-    grid_id: tuple[DimSymbol, ...],
+    grid_dims: AbstractGridDimTuple,
     units: str,
-    data_dims: Optional[tuple[str, ...]] = None,
+    data_dims: Optional[DataDimTuple] = None,
 ) -> DataArray:
-    """Create a ``DataArray`` out of ``buffer``."""
-    grid = computational_grid.grids[grid_id]
+    """Create a ``DataArray`` out of  a raw ``buffer``."""
+    grid = computational_grid.grids[grid_dims]
     data_dims = data_dims or ()
-    data_ndim = len(data_dims)
-    data_shape = buffer.shape[grid.ndim :]
-    assert len(data_shape) == data_ndim
-
-    dims = grid.dims + data_dims
-    coords = grid.coords + tuple(np.arange(size) for size in data_shape)
-    view_shape = grid.shape + data_shape
-    view_slice = grid.get_storage_view_slice() + tuple(slice(0, size) for size in data_shape)
+    dim_names = grid.dim_names + tuple(str(dim) for dim in data_dims)
+    coords = grid.coords + tuple(dim.coords for dim in data_dims)
+    view_shape = grid.shape + tuple(dim.size for dim in data_dims)
+    view_slice = grid.get_storage_view_slice() + tuple(slice(0, dim.size) for dim in data_dims)
     return DataArray(
         buffer,
-        dims=dims,
+        dims=dim_names,
         coords=coords,
         attrs={"units": units, "view_shape": view_shape, "view_slice": view_slice},
     )
@@ -82,10 +84,9 @@ def get_data_array(
 
 def zeros(
     computational_grid: ComputationalGrid,
-    grid_id: tuple[DimSymbol, ...],
+    grid_dims: AbstractGridDimTuple,
     units: str,
-    data_shape: Optional[tuple[int, ...]] = None,
-    data_dims: Optional[tuple[str, ...]] = None,
+    data_dims: Optional[DataDimTuple] = None,
     *,
     gt4py_config: GT4PyConfig,
     dtype_name: Literal["bool", "float", "int"],
@@ -96,15 +97,15 @@ def zeros(
     """
     buffer = gt_zeros(
         computational_grid,
-        grid_id,
-        data_shape=data_shape,
+        grid_dims,
+        data_dims=data_dims,
         gt4py_config=gt4py_config,
         dtype_name=dtype_name,
     )
-    return get_data_array(buffer, computational_grid, grid_id, units, data_dims=data_dims)
+    return get_data_array(buffer, computational_grid, grid_dims, units, data_dims=data_dims)
 
 
-def initialize_field(field: DataArray, buffer: NDArrayLike) -> None:
+def assign(field: DataArray, buffer: NDArrayLike) -> None:
     assert field.ndim == buffer.ndim
     view_shape = field.attrs.get("view_shape", field.shape)
     view_slice = field.attrs.get("view_slice", tuple(slice(0, None) for _ in range(field.ndim)))
@@ -114,25 +115,7 @@ def initialize_field(field: DataArray, buffer: NDArrayLike) -> None:
         for view_size, buffer_size in zip(view_shape, buffer.shape)
     )
     buffer = np.tile(buffer, reps)
-    assign(field.data[view_slice], buffer[buffer_slice])
-
-
-def get_dtype_name(field_name: str) -> Literal["bool", "float", "int"]:
-    """
-    Retrieve the datatype identifier of a field from the field name.
-
-    Assume that the name of a bool field is of the form 'b_{some_name}',
-    the name of a float field is of the form 'f_{some_name}',
-    and the name of an integer field is of the form 'i_{some_name}'.
-    """
-    if field_name.startswith("b"):
-        return "bool"
-    elif field_name.startswith("f"):
-        return "float"
-    elif field_name.startswith("i"):
-        return "int"
-    else:
-        raise RuntimeError(f"Cannot retrieve dtype for field {repr(field_name)}.")
+    npx.assign(field.data[view_slice], buffer[buffer_slice])
 
 
 TEMPORARY_STORAGE_POOL: dict[int, list[NDArrayLike]] = {}
@@ -141,7 +124,7 @@ TEMPORARY_STORAGE_POOL: dict[int, list[NDArrayLike]] = {}
 @contextmanager
 def managed_temporary_storage(
     computational_grid: ComputationalGrid,
-    *args: tuple[tuple[DimSymbol, ...], Literal["bool", "float", "int"]],
+    *args: tuple[DimTuple, Literal["bool", "float", "int"]],
     gt4py_config: GT4PyConfig,
 ) -> Iterator[NDArrayLike]:
     """
@@ -155,14 +138,16 @@ def managed_temporary_storage(
     """
     grid_hashes = []
     storages = []
-    for grid_id, dtype in args:
-        grid = computational_grid.grids[grid_id]
-        grid_hash = hash((grid.shape + grid_id, dtype))
+    for grid_dims, dtype_name in args:
+        grid = computational_grid.grids[grid_dims]
+        grid_hash = hash((grid.shape + grid_dims, dtype_name))
         pool = TEMPORARY_STORAGE_POOL.setdefault(grid_hash, [])
         if len(pool) > 0:
             storage = pool.pop()
         else:
-            storage = zeros(computational_grid, grid_id, gt4py_config=gt4py_config, dtype=dtype)
+            storage = gt_zeros(
+                computational_grid, grid_dims, gt4py_config=gt4py_config, dtype_name=dtype_name
+            )
         grid_hashes.append(grid_hash)
         storages.append(storage)
 
@@ -194,3 +179,19 @@ def managed_temporary_storage_pool() -> Iterator[None]:
                 storage = storages.pop()
                 del storage
         TEMPORARY_STORAGE_POOL.clear()
+
+
+# if __name__ == "__main__":
+#     from ifs_physics_common.framework.config import DomainConfig, GT4PyConfig
+#     from ifs_physics_common.framework.grid import ComputationalGrid, I, J, K
+#     from ifs_physics_common.utils.numpyx import assign as npx_assign
+#
+#     domain_config = DomainConfig(nx=1, ny=14)
+#     gt4py_config = GT4PyConfig(backend="numpy")
+#     grid = ComputationalGrid(domain_config)
+#     field_ = zeros(grid, (I, J, K), units="K", gt4py_config=gt4py_config, dtype_name="float")
+#     np.random.seed(20220604)
+#     buffer_ = np.random.rand(5, 5, 1)
+#     initialize_field(field_, buffer_)
+#     print(f"{buffer_[..., 0]=}")
+#     print(f"{field_.data[..., 0]=}")
