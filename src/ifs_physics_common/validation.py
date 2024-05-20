@@ -19,7 +19,7 @@ import numpy as np
 from typing import Optional, TYPE_CHECKING
 import warnings
 
-from ifs_physics_common.utils.numpyx import to_numpy
+from ifs_physics_common.numpyx import to_numpy
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray

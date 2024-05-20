@@ -19,8 +19,8 @@ from h5py import File
 import numpy as np
 from typing import TYPE_CHECKING
 
-from ifs_physics_common.framework.grid import DataDim, ExpandedDim
-from ifs_physics_common.framework.storage import assign, zeros
+from ifs_physics_common.grid import DataDim, ExpandedDim
+from ifs_physics_common.storage import assign, zeros
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -28,8 +28,8 @@ if TYPE_CHECKING:
 
     from sympl._core.typingx import DataArray
 
-    from ifs_physics_common.framework.config import GT4PyConfig
-    from ifs_physics_common.framework.grid import (
+    from ifs_physics_common.config import GT4PyConfig
+    from ifs_physics_common.grid import (
         AbstractGridDimTuple,
         ComputationalGrid,
         DataDimTuple,
@@ -43,10 +43,10 @@ class HDF5Operator:
     gt4py_config: GT4PyConfig
 
     def __init__(
-        self, computational_grid: ComputationalGrid, filename: str, *, gt4py_config: GT4PyConfig
+        self, filename: str, computational_grid: ComputationalGrid, *, gt4py_config: GT4PyConfig
     ) -> None:
-        self.computational_grid = computational_grid
         self.f = File(filename, mode="r")
+        self.computational_grid = computational_grid
         self.gt4py_config = gt4py_config
 
     def get_field(
@@ -69,11 +69,11 @@ class HDF5Operator:
             gt4py_config=self.gt4py_config,
             dtype_name=dtype_name,
         )
-        rhs = self.read_field(grid_dims + data_dims, dtype_name, h5_name, h5_dims, h5_dims_map)
+        rhs = self.read_raw_field(grid_dims + data_dims, dtype_name, h5_name, h5_dims, h5_dims_map)
         assign(field, rhs)
         return field
 
-    def read_field(
+    def read_raw_field(
         self,
         dims: DimTuple,
         dtype_name: Literal["bool", "float", "int"],

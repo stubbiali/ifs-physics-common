@@ -22,14 +22,14 @@ from typing import TYPE_CHECKING
 import gt4py
 from sympl._core.data_array import DataArray
 
-from ifs_physics_common.utils import numpyx as npx
+from ifs_physics_common import numpyx as npx
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
     from typing import Literal, Optional
 
-    from ifs_physics_common.framework.config import GT4PyConfig
-    from ifs_physics_common.framework.grid import (
+    from ifs_physics_common.config import GT4PyConfig
+    from ifs_physics_common.grid import (
         AbstractGridDimTuple,
         ComputationalGrid,
         DataDimTuple,

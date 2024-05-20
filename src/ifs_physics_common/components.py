@@ -24,9 +24,9 @@ from sympl._core.core_components import (
     ImplicitTendencyComponent as SymplImplicitTendencyComponent,
 )
 
-from ifs_physics_common.framework.config import GT4PyConfig
-from ifs_physics_common.framework.stencil import compile_stencil
-from ifs_physics_common.framework.storage import gt_zeros
+from ifs_physics_common.config import GT4PyConfig
+from ifs_physics_common.stencil import compile_stencil
+from ifs_physics_common.storage import gt_zeros
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -34,8 +34,8 @@ if TYPE_CHECKING:
     from gt4py.cartesian import StencilObject
     from sympl._core.typingx import PropertyDict
 
-    from ifs_physics_common.framework.grid import ComputationalGrid
-    from ifs_physics_common.utils.typingx import NDArrayLike
+    from ifs_physics_common.grid import ComputationalGrid
+    from ifs_physics_common.typingx import NDArrayLike
 
 
 class ComputationalGridComponent:
@@ -59,8 +59,8 @@ class ComputationalGridComponent:
         return properties
 
     def allocate(self, name: str, properties: PropertyDict) -> NDArrayLike:
-        data_dims = properties.get("data_dims", ())
-        dtype_name = properties.get("dtype_name", "float")
+        data_dims = properties[name].get("data_dims", ())
+        dtype_name = properties[name].get("dtype_name", "float")
         return gt_zeros(
             self.computational_grid,
             properties[name]["grid_dims"],

@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from numpy.typing import NDArray
     from typing import Literal, Optional
 
-    from ifs_physics_common.framework.config import DomainConfig
+    from ifs_physics_common.config import DomainConfig
 
 
 DIM_INSTANCES = {}

@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
     from gt4py.cartesian import StencilObject
 
-    from ifs_physics_common.framework.config import GT4PyConfig
+    from ifs_physics_common.config import GT4PyConfig
 
 
 FUNCTION_COLLECTION = {}
