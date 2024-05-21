@@ -179,19 +179,3 @@ def managed_temporary_storage_pool() -> Iterator[None]:
                 storage = storages.pop()
                 del storage
         TEMPORARY_STORAGE_POOL.clear()
-
-
-# if __name__ == "__main__":
-#     from ifs_physics_common.framework.config import DomainConfig, GT4PyConfig
-#     from ifs_physics_common.framework.grid import ComputationalGrid, I, J, K
-#     from ifs_physics_common.utils.numpyx import assign as npx_assign
-#
-#     domain_config = DomainConfig(nx=1, ny=14)
-#     gt4py_config = GT4PyConfig(backend="numpy")
-#     grid = ComputationalGrid(domain_config)
-#     field_ = zeros(grid, (I, J, K), units="K", gt4py_config=gt4py_config, dtype_name="float")
-#     np.random.seed(20220604)
-#     buffer_ = np.random.rand(5, 5, 1)
-#     initialize_field(field_, buffer_)
-#     print(f"{buffer_[..., 0]=}")
-#     print(f"{field_.data[..., 0]=}")
