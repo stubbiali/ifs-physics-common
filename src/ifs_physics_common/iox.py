@@ -156,7 +156,7 @@ class HDF5GridOperator:
 
             slice_i = slice(0, None)
             if isinstance(dim, DataDim):
-                slice_i = dim.index if dim.index is not None else slice_i
+                slice_i = dim.index if dim.index is not None else slice_i  # type: ignore[assignment]
             slices.append(slice_i)
 
         value = np.flip(value, axis=flip_axes)

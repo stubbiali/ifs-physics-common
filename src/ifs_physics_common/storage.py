@@ -33,7 +33,6 @@ if TYPE_CHECKING:
         AbstractGridDimTuple,
         ComputationalGrid,
         DataDimTuple,
-        DimTuple,
     )
     from ifs_physics_common.typingx import NDArrayLike
 
@@ -124,7 +123,7 @@ TEMPORARY_STORAGE_POOL: dict[int, list[NDArrayLike]] = {}
 @contextmanager
 def managed_temporary_storage(
     computational_grid: ComputationalGrid,
-    *args: tuple[DimTuple, Literal["bool", "float", "int"]],
+    *args: tuple[AbstractGridDimTuple, Literal["bool", "float", "int"]],
     gt4py_config: GT4PyConfig,
 ) -> Iterator[NDArrayLike]:
     """

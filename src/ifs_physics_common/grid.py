@@ -15,7 +15,6 @@
 # limitations under the License.
 
 from __future__ import annotations
-from collections import namedtuple
 from functools import cached_property, lru_cache
 import numpy as np
 from typing import Union, TYPE_CHECKING
@@ -23,7 +22,7 @@ from typing import Union, TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Hashable
     from numpy.typing import NDArray
-    from typing import Literal, Optional
+    from typing import Any, Literal, Optional
 
     from ifs_physics_common.config import GridConfig
 
@@ -32,7 +31,7 @@ DIM_INSTANCES = {}
 
 
 class MetaDim(type):
-    def __call__(cls, *args):
+    def __call__(cls, *args):  # type: ignore[no-untyped-def]
         key = hash(args)
         if key not in DIM_INSTANCES:
             obj = super().__call__(*args)
@@ -70,7 +69,7 @@ class AbstractGridDim(metaclass=MetaDim):
     def __neg__(self) -> AbstractGridDim:
         return AbstractGridDim(self.name, self.axis, self.offset, -self.direction)
 
-    def __eq__(self, other: Union[AbstractGridDim, ConcreteGridDim]) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, ConcreteGridDim):
             return self == other.abstract_dim
         elif isinstance(other, AbstractGridDim):
@@ -143,7 +142,7 @@ class ConcreteGridDim:
             coords = coords[::-1]
         return np.array(coords)
 
-    def __eq__(self, other: Union[AbstractGridDim, ConcreteGridDim]) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, AbstractGridDim):
             return self.abstract_dim == other
         elif isinstance(other, ConcreteGridDim):
@@ -152,7 +151,12 @@ class ConcreteGridDim:
             return False
 
 
-ExpandedDim = namedtuple("ExpandedDim", field_names=[])
+class ExpandedDim_:
+    def __neg__(self) -> ExpandedDim_:
+        return self
+
+
+ExpandedDim = ExpandedDim_()
 
 
 class DataDim(metaclass=MetaDim):
@@ -173,7 +177,7 @@ class DataDim(metaclass=MetaDim):
     def __neg__(self) -> DataDim:
         return DataDim(self.name, self.size, -self.direction, self.index)
 
-    def __eq__(self, other: DataDim) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, DataDim):
             return (
                 self.name == other.name
@@ -203,7 +207,7 @@ D5 = DataDim("D", 5)
 
 AbstractGridDimTuple = tuple[AbstractGridDim, ...]
 DataDimTuple = tuple[DataDim, ...]
-DimTuple = tuple[Union[AbstractGridDim, DataDim, type[ExpandedDim]], ...]
+DimTuple = tuple[Union[AbstractGridDim, DataDim, ExpandedDim_], ...]
 
 
 class Grid:

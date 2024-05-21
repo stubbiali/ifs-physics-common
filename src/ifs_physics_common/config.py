@@ -42,7 +42,7 @@ class DataTypes(BaseModel):
     int: type
 
     def from_name(self, name: Literal["bool", "float", "int"]) -> type:
-        return self.dict()[name]
+        return self.dict()[name]  # type: ignore[no-any-return]
 
     @staticmethod
     def with_precision(precision: Literal["double", "single"]) -> DataTypes:

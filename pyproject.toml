@@ -92,11 +92,7 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-module = 'cupy'
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = 'sympl.*'
+module = ['cupy', 'h5py', 'sympl.*']
 ignore_missing_imports = true
 
 [tool.setuptools]
