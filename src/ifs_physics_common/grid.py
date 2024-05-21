@@ -42,23 +42,28 @@ class MetaDim(type):
 
 class AbstractGridDim(metaclass=MetaDim):
     name: str
+    axis: Literal[0, 1, 2]
     offset: float
     direction: Literal[-1, 1]
 
-    def __init__(self, name: str, offset: float = 0, direction: Literal[-1, 1] = 1) -> None:
-        self.name = name
+    def __init__(
+        self, name: str, axis: Literal[0, 1, 2], offset: float = 0, direction: Literal[-1, 1] = 1
+    ) -> None:
+        assert axis in (0, 1, 2)
         assert offset in (-0.5, 0, 0.5)
+        self.name = name
+        self.axis = axis
         self.offset = offset
         self.direction = direction
 
     def __add__(self, other: float) -> AbstractGridDim:
-        return AbstractGridDim(self.name, self.offset + other)
+        return AbstractGridDim(self.name, self.axis, self.offset + other)
 
     def __sub__(self, other: float) -> AbstractGridDim:
         return self + (-other)
 
     def __neg__(self) -> AbstractGridDim:
-        return AbstractGridDim(self.name, self.offset, -self.direction)
+        return AbstractGridDim(self.name, self.axis, self.offset, -self.direction)
 
     def __eq__(self, other: Union[AbstractGridDim, ConcreteGridDim]) -> bool:
         if isinstance(other, ConcreteGridDim):
@@ -66,6 +71,7 @@ class AbstractGridDim(metaclass=MetaDim):
         elif isinstance(other, AbstractGridDim):
             return (
                 self.name == other.name
+                and self.axis == other.axis
                 and self.offset == other.offset
                 and self.direction == other.direction
             )
@@ -73,7 +79,7 @@ class AbstractGridDim(metaclass=MetaDim):
             return False
 
     def __hash__(self) -> int:
-        return hash((self.name, self.offset, self.direction))
+        return hash((self.name, self.axis, self.offset, self.direction))
 
     def __repr__(self) -> str:
         if self.offset > 0:
@@ -84,20 +90,20 @@ class AbstractGridDim(metaclass=MetaDim):
             return f"{self.name}"
 
     def concretize(self, grid_config: GridConfig) -> ConcreteGridDim:
-        if self.name in ("I", "IJ"):
+        if self.axis == 0:
             return ConcreteGridDim(self, (grid_config.xmin, grid_config.xmax), grid_config.nx)
-        elif self.name == "J":
+        elif self.axis == 1:
             return ConcreteGridDim(self, (grid_config.ymin, grid_config.ymax), grid_config.ny)
-        elif self.name == "K":
+        elif self.axis == 2:
             return ConcreteGridDim(self, (grid_config.zmin, grid_config.zmax), grid_config.nz)
         else:
             raise ValueError(f"Unknown dimension {repr(self.name)}.")
 
 
-I = AbstractGridDim("I")
-IJ = AbstractGridDim("IJ")
-J = AbstractGridDim("J")
-K = AbstractGridDim("K")
+I = AbstractGridDim("I", 0)
+IJ = AbstractGridDim("IJ", 0)
+J = AbstractGridDim("J", 1)
+K = AbstractGridDim("K", 2)
 
 
 class ConcreteGridDim:
