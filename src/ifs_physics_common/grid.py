@@ -42,15 +42,20 @@ class MetaDim(type):
 
 class AbstractGridDim(metaclass=MetaDim):
     name: str
-    axis: Literal[0, 1, 2]
+    axis: Literal["x", "y", "z"]
     offset: float
     direction: Literal[-1, 1]
 
     def __init__(
-        self, name: str, axis: Literal[0, 1, 2], offset: float = 0, direction: Literal[-1, 1] = 1
+        self,
+        name: str,
+        axis: Literal["x", "y", "z"],
+        offset: float = 0,
+        direction: Literal[-1, 1] = 1,
     ) -> None:
-        assert axis in (0, 1, 2)
+        assert axis in ("x", "y", "z")
         assert offset in (-0.5, 0, 0.5)
+        assert direction in (-1, 1)
         self.name = name
         self.axis = axis
         self.offset = offset
@@ -90,20 +95,20 @@ class AbstractGridDim(metaclass=MetaDim):
             return f"{self.name}"
 
     def concretize(self, grid_config: GridConfig) -> ConcreteGridDim:
-        if self.axis == 0:
+        if self.axis == "x":
             return ConcreteGridDim(self, (grid_config.xmin, grid_config.xmax), grid_config.nx)
-        elif self.axis == 1:
+        elif self.axis == "y":
             return ConcreteGridDim(self, (grid_config.ymin, grid_config.ymax), grid_config.ny)
-        elif self.axis == 2:
+        elif self.axis == "z":
             return ConcreteGridDim(self, (grid_config.zmin, grid_config.zmax), grid_config.nz)
         else:
             raise ValueError(f"Unknown dimension {repr(self.name)}.")
 
 
-I = AbstractGridDim("I", 0)
-IJ = AbstractGridDim("IJ", 0)
-J = AbstractGridDim("J", 1)
-K = AbstractGridDim("K", 2)
+I = AbstractGridDim("I", "x")
+IJ = AbstractGridDim("IJ", "x")
+J = AbstractGridDim("J", "y")
+K = AbstractGridDim("K", "z")
 
 
 class ConcreteGridDim:
