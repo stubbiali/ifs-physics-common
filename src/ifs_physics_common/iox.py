@@ -23,8 +23,10 @@ from ifs_physics_common.grid import DataDim, ExpandedDim
 from ifs_physics_common.storage import assign, zeros
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from numpy.typing import NDArray
-    from typing import Literal, Optional
+    from pydantic import BaseModel
+    from typing import Literal, Optional, Union
 
     from sympl._core.typingx import DataArray
 
@@ -38,16 +40,53 @@ if TYPE_CHECKING:
 
 
 class HDF5Operator:
+    f: File
+    gt4py_config: GT4PyConfig
+
+    def __init__(self, filename: str, *, gt4py_config: GT4PyConfig) -> None:
+        self.f = File(filename, mode="r")
+        self.gt4py_config = gt4py_config
+
+    def __del__(self) -> None:
+        self.f.close()
+
+    def get_params(
+        self, param_cls: type[BaseModel], get_param_name: Optional[Callable[[str], str]] = None
+    ) -> BaseModel:
+        init_dict: dict[str, Union[bool, float, int]] = {}
+        for attr_name, metadata in param_cls.schema()["properties"].items():
+            param_name = get_param_name(attr_name) if get_param_name is not None else attr_name
+            param_type = metadata["type"]
+            if param_type == "boolean":
+                init_dict[attr_name] = self.gt4py_config.dtypes.bool(
+                    self.f.get(param_name, [True])[0]
+                )
+            elif param_type == "number":
+                init_dict[attr_name] = self.gt4py_config.dtypes.float(
+                    self.f.get(param_name, [0.0])[0]
+                )
+            elif param_type == "integer":
+                init_dict[attr_name] = self.gt4py_config.dtypes.int(self.f.get(param_name, [0])[0])
+            else:
+                raise ValueError(f"Invalid parameter type `{param_type}`.")
+        return param_cls(**init_dict)
+
+
+class HDF5GridOperator:
     computational_grid: ComputationalGrid
     f: File
     gt4py_config: GT4PyConfig
+    hdf5_operator: HDF5Operator
 
     def __init__(
         self, filename: str, computational_grid: ComputationalGrid, *, gt4py_config: GT4PyConfig
     ) -> None:
-        self.f = File(filename, mode="r")
         self.computational_grid = computational_grid
-        self.gt4py_config = gt4py_config
+        self.hdf5_operator = HDF5Operator(filename, gt4py_config=gt4py_config)
+
+        # convenient shortcuts
+        self.f = self.hdf5_operator.f
+        self.gt4py_config = self.hdf5_operator.gt4py_config
 
     def get_field(
         self,
@@ -69,11 +108,11 @@ class HDF5Operator:
             gt4py_config=self.gt4py_config,
             dtype_name=dtype_name,
         )
-        rhs = self.read_raw_field(grid_dims + data_dims, dtype_name, h5_name, h5_dims, h5_dims_map)
+        rhs = self._read_raw_field(grid_dims + data_dims, dtype_name, h5_name, h5_dims, h5_dims_map)
         assign(field, rhs)
         return field
 
-    def read_raw_field(
+    def _read_raw_field(
         self,
         dims: DimTuple,
         dtype_name: Literal["bool", "float", "int"],
@@ -125,6 +164,3 @@ class HDF5Operator:
         assert value.ndim == ndim
 
         return value
-
-    def __del__(self) -> None:
-        self.f.close()
