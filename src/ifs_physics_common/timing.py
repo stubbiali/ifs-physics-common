@@ -13,3 +13,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from __future__ import annotations
+from contextlib import contextmanager
+from typing import TYPE_CHECKING
+
+from sympl._core.time import Timer
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+
+@contextmanager
+def timing(label: str) -> Iterator[type[Timer]]:
+    try:
+        Timer.start(label)
+        yield Timer
+    finally:
+        Timer.stop()

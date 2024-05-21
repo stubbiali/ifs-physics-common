@@ -18,6 +18,7 @@ classifiers = [
 dependencies = [
     # note(stubbiali): specify commit hash until #1462 is available in a public release
     'gt4py[dace] @ git+https://github.com/GridTools/gt4py.git@2cd0c91',
+    'h5py',
     'numpy>=1.22',
     'pydantic<2.0',
     'sympl @ git+https://github.com/stubbiali/sympl.git@oop'
@@ -30,7 +31,7 @@ keywords = [
 license = {file = 'LICENSE.md', content-type = 'text/markdown'}
 name = 'ifs_physics_common'
 readme = {file = 'README.md', content-type = 'text/markdown'}
-requires-python = '>=3.8'
+requires-python = '>=3.9'
 version = '0.0'
 
 [project.optional-dependencies]
@@ -91,11 +92,7 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-module = 'cupy'
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = 'sympl.*'
+module = ['cupy', 'h5py', 'sympl.*']
 ignore_missing_imports = true
 
 [tool.setuptools]

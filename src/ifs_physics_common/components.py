@@ -17,29 +17,25 @@
 from __future__ import annotations
 from abc import abstractmethod
 from functools import cached_property
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from sympl._core.core_components import (
     DiagnosticComponent as SymplDiagnosticComponent,
     ImplicitTendencyComponent as SymplImplicitTendencyComponent,
 )
 
-from ifs_physics_common.framework.config import GT4PyConfig
-from ifs_physics_common.framework.stencil import compile_stencil
-from ifs_physics_common.framework.storage import (
-    get_data_shape_from_name,
-    get_dtype_from_name,
-    zeros,
-)
+from ifs_physics_common.config import GT4PyConfig
+from ifs_physics_common.stencil import compile_stencil
+from ifs_physics_common.storage import gt_zeros
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any, Optional
 
     from gt4py.cartesian import StencilObject
     from sympl._core.typingx import PropertyDict
 
-    from ifs_physics_common.framework.grid import ComputationalGrid
-    from ifs_physics_common.utils.typingx import NDArrayLike
+    from ifs_physics_common.grid import ComputationalGrid
+    from ifs_physics_common.typingx import NDArrayLike
 
 
 class ComputationalGridComponent:
@@ -50,24 +46,27 @@ class ComputationalGridComponent:
         self.gt4py_config = gt4py_config
 
     def compile_stencil(
-        self, name: str, externals: Optional[Dict[str, Any]] = None
+        self, name: str, externals: Optional[dict[str, Any]] = None
     ) -> StencilObject:
         return compile_stencil(name, self.gt4py_config, externals)
 
     def fill_properties_with_dims(self, properties: PropertyDict) -> PropertyDict:
         for field_name, field_prop in properties.items():
-            field_prop["dims"] = self.computational_grid.grids[field_prop["grid"]].dims
+            assert "grid_dims" in field_prop
+            dim_names = self.computational_grid.grids[field_prop["grid_dims"]].dim_names
+            data_dims = field_prop.get("data_dims", ())
+            field_prop["dims"] = dim_names + tuple(str(dim) for dim in data_dims)
         return properties
 
     def allocate(self, name: str, properties: PropertyDict) -> NDArrayLike:
-        data_shape = get_data_shape_from_name(name)
-        dtype = get_dtype_from_name(name)
-        return zeros(
+        data_dims = properties[name].get("data_dims", ())
+        dtype_name = properties[name].get("dtype_name", "float")
+        return gt_zeros(
             self.computational_grid,
-            properties[name]["grid"],
-            data_shape,
+            properties[name]["grid_dims"],
+            data_dims=data_dims,
             gt4py_config=self.gt4py_config,
-            dtype=dtype,
+            dtype_name=dtype_name,
         )
 
 
@@ -86,11 +85,11 @@ class DiagnosticComponent(ComputationalGridComponent, SymplDiagnosticComponent):
 
     @cached_property
     def input_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._input_properties)
+        return self.fill_properties_with_dims(self.input_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _input_properties(self) -> PropertyDict:
+    def input_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of an input field, and the corresponding value is a
         dictionary specifying the units for that field ('units') and the identifier of the grid over
@@ -103,11 +102,11 @@ class DiagnosticComponent(ComputationalGridComponent, SymplDiagnosticComponent):
 
     @cached_property
     def diagnostic_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._diagnostic_properties)
+        return self.fill_properties_with_dims(self.diagnostic_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _diagnostic_properties(self) -> PropertyDict:
+    def diagnostic_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of a field diagnosed by the component, and the
         corresponding value is a dictionary specifying the units for that field ('units') and the
@@ -131,11 +130,11 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
 
     @cached_property
     def input_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._input_properties)
+        return self.fill_properties_with_dims(self.input_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _input_properties(self) -> PropertyDict:
+    def input_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of an input field, and the corresponding value is a
         dictionary specifying the units for that field ('units') and the identifier of the grid over
@@ -148,11 +147,11 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
 
     @cached_property
     def tendency_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._tendency_properties)
+        return self.fill_properties_with_dims(self.tendency_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _tendency_properties(self) -> PropertyDict:
+    def tendency_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of a tendency field computed by the component, and the
         corresponding value is a dictionary specifying the units for that field ('units') and the
@@ -165,11 +164,11 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
 
     @cached_property
     def diagnostic_properties(self) -> PropertyDict:
-        return self.fill_properties_with_dims(self._diagnostic_properties)
+        return self.fill_properties_with_dims(self.diagnostic_grid_properties)
 
     @abstractmethod
     @cached_property
-    def _diagnostic_properties(self) -> PropertyDict:
+    def diagnostic_grid_properties(self) -> PropertyDict:
         """
         Dictionary where each key is the name of a field diagnosed by the component, and the
         corresponding value is a dictionary specifying the units for that field ('units') and the
