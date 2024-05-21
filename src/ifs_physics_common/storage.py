@@ -35,7 +35,7 @@ if TYPE_CHECKING:
         DataDimTuple,
         DimTuple,
     )
-    from ifs_physics_common.utils.typingx import NDArrayLike
+    from ifs_physics_common.typingx import NDArrayLike
 
 
 def gt_zeros(
