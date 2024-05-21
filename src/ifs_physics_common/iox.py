@@ -57,16 +57,21 @@ class HDF5Operator:
         for attr_name, metadata in param_cls.schema()["properties"].items():
             param_name = get_param_name(attr_name) if get_param_name is not None else attr_name
             param_type = metadata["type"]
+            param_default = metadata.get("default")
             if param_type == "boolean":
                 init_dict[attr_name] = self.gt4py_config.dtypes.bool(
-                    self.f.get(param_name, [True])[0]
+                    self.f.get(param_name, [param_default if param_default is not None else True])[
+                        0
+                    ]
                 )
             elif param_type == "number":
                 init_dict[attr_name] = self.gt4py_config.dtypes.float(
-                    self.f.get(param_name, [0.0])[0]
+                    self.f.get(param_name, [param_default if param_default is not None else 0.0])[0]
                 )
             elif param_type == "integer":
-                init_dict[attr_name] = self.gt4py_config.dtypes.int(self.f.get(param_name, [0])[0])
+                init_dict[attr_name] = self.gt4py_config.dtypes.int(
+                    self.f.get(param_name, [param_default if param_default is not None else 0])[0]
+                )
             else:
                 raise ValueError(f"Invalid parameter type `{param_type}`.")
         return param_cls(**init_dict)
