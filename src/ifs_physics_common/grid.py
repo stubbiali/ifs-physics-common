@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from numpy.typing import NDArray
     from typing import Literal, Optional
 
-    from ifs_physics_common.config import DomainConfig
+    from ifs_physics_common.config import GridConfig
 
 
 DIM_INSTANCES = {}
@@ -83,13 +83,13 @@ class AbstractGridDim(metaclass=MetaDim):
         else:
             return f"{self.name}"
 
-    def concretize(self, domain_config: DomainConfig) -> ConcreteGridDim:
+    def concretize(self, grid_config: GridConfig) -> ConcreteGridDim:
         if self.name in ("I", "IJ"):
-            return ConcreteGridDim(self, (domain_config.xmin, domain_config.xmax), domain_config.nx)
+            return ConcreteGridDim(self, (grid_config.xmin, grid_config.xmax), grid_config.nx)
         elif self.name == "J":
-            return ConcreteGridDim(self, (domain_config.ymin, domain_config.ymax), domain_config.ny)
+            return ConcreteGridDim(self, (grid_config.ymin, grid_config.ymax), grid_config.ny)
         elif self.name == "K":
-            return ConcreteGridDim(self, (domain_config.zmin, domain_config.zmax), domain_config.nz)
+            return ConcreteGridDim(self, (grid_config.zmin, grid_config.zmax), grid_config.nz)
         else:
             raise ValueError(f"Unknown dimension {repr(self.name)}.")
 
@@ -206,12 +206,12 @@ class Grid:
     spacing: tuple[float, ...]
     storage_shape: tuple[int, ...]
 
-    def __init__(self, abstract_dims: AbstractGridDimTuple, domain_config: DomainConfig) -> None:
+    def __init__(self, abstract_dims: AbstractGridDimTuple, grid_config: GridConfig) -> None:
         self.abstract_dims = abstract_dims
         self.ndim = len(abstract_dims)
         self.dim_names = tuple(str(dim) for dim in abstract_dims)
 
-        concrete_dims = [dim.concretize(domain_config) for dim in abstract_dims]
+        concrete_dims = [dim.concretize(grid_config) for dim in abstract_dims]
         self.shape = tuple(dim.size for dim in concrete_dims)
         self.coords = tuple(dim.coords for dim in concrete_dims)
         self.padding = tuple(dim.padding for dim in concrete_dims)
@@ -253,9 +253,9 @@ class ComputationalGrid:
         (K - 1 / 2,),
     )
 
-    domain_config: DomainConfig
+    grid_config: GridConfig
     grids: dict[Hashable, Grid]
 
-    def __init__(self, domain_config: DomainConfig) -> None:
-        self.domain_config = domain_config
-        self.grids = {dims: Grid(dims, domain_config) for dims in self.GRID_LOCATIONS}
+    def __init__(self, grid_config: GridConfig) -> None:
+        self.grid_config = grid_config
+        self.grids = {dims: Grid(dims, grid_config) for dims in self.GRID_LOCATIONS}
