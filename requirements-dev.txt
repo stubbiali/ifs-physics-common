@@ -34,7 +34,7 @@ fonttools==4.42.1         # via matplotlib
 fparser==0.1.4            # via dace
 frozendict==2.3.8         # via gt4py
 gridtools-cpp==2.3.5      # via gt4py
-gt4py[dace] @ git+https://github.com/stubbiali/gt4py.git@data-dim-loops  # via ifs_physics_common (pyproject.toml)
+gt4py[dace] @ git+https://github.com/stubbiali/gt4py.git@ecrad  # via ifs_physics_common (pyproject.toml)
 identify==2.5.28          # via pre-commit
 ipdb==0.13.13             # via ifs_physics_common (pyproject.toml)
 ipython==8.22.0           # via ifs_physics_common (pyproject.toml), ipdb
