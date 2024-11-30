@@ -26,7 +26,7 @@ except ImportError:
 if TYPE_CHECKING:
     from numpy.typing import NDArray
 
-    from ifs_physics_common.utils.typingx import NDArrayLike
+    from ifs_physics_common.typingx import NDArrayLike
 
 
 def to_numpy(storage: NDArrayLike) -> NDArray:

@@ -21,7 +21,8 @@ import os
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Literal, Optional, Sequence, Tuple
+    from collections.abc import Sequence
+    from typing import Any, Literal, Optional
 
 
 def write_performance_to_csv(
@@ -86,7 +87,7 @@ def write_stencils_performance_to_csv(
     num_cols: int,
     num_threads: int,
     num_runs: int,
-    exec_info: Dict[str, Any],
+    exec_info: dict[str, Any],
     key_patterns: Sequence[str],
 ) -> None:
     call_time = 0.0
@@ -127,7 +128,7 @@ def write_stencils_performance_to_csv(
 
 def print_performance(
     num_cols: int, runtime_l: Sequence[float], mflops_l: Optional[Sequence[float]] = None
-) -> Tuple[float, float, float, float]:
+) -> tuple[float, float, float, float]:
     """Print means and standard deviation of runtimes and MFLOPS."""
     n = len(runtime_l)
     print(f"== Performance:")
