@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
     # note(stubbiali): specify commit hash until #1462 is available in a public release
-    'gt4py[dace] @ git+https://github.com/GridTools/gt4py.git@2cd0c91',
+    'gt4py>=1.0.4',
     'numpy>=1.22',
     'pydantic<2.0',
     'sympl @ git+https://github.com/stubbiali/sympl.git@oop'
