@@ -13,11 +13,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from ifs_physics_common.framework import (
-    components as components,
-    config as config,
-    grid as grid,
-    stencil as stencil,
-    storage as storage,
-)
