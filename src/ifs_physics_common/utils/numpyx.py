@@ -26,12 +26,12 @@ except ImportError:
     cp = np
 
 if TYPE_CHECKING:
-    from numpy.typing import NDArray
+    import numpy.typing as npt
 
     from ifs_physics_common.utils.typingx import NDArrayLike
 
 
-def to_numpy(storage: NDArrayLike) -> NDArray:
+def to_numpy(storage: NDArrayLike) -> npt.NDArray:
     try:
         # storage is a cupy array
         return storage.get()  # type: ignore[no-any-return, union-attr]

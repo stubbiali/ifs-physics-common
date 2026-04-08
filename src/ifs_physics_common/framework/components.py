@@ -16,14 +16,11 @@
 
 from __future__ import annotations
 
-from abc import abstractmethod
-from functools import cached_property
+import abc
+import functools
 from typing import TYPE_CHECKING, Optional
 
-from sympl._core.core_components import (
-    DiagnosticComponent as SymplDiagnosticComponent,  # noqa: PLC2701
-    ImplicitTendencyComponent as SymplImplicitTendencyComponent,  # noqa: PLC2701
-)
+import sympl
 
 from ifs_physics_common.framework.stencil import compile_stencil
 from ifs_physics_common.framework.storage import (
@@ -35,8 +32,8 @@ from ifs_physics_common.framework.storage import (
 if TYPE_CHECKING:
     from typing import Any, Dict
 
-    from gt4py.cartesian import StencilObject
-    from sympl._core.typingx import PropertyDict
+    import gt4py.cartesian as gtc
+    import sympl._core.typingx as symplt
 
     from ifs_physics_common.framework.config import GT4PyConfig
     from ifs_physics_common.framework.grid import ComputationalGrid
@@ -52,15 +49,15 @@ class ComputationalGridComponent:
 
     def compile_stencil(
         self, name: str, externals: Optional[Dict[str, Any]] = None
-    ) -> StencilObject:
+    ) -> gtc.StencilObject:
         return compile_stencil(name, self.gt4py_config, externals)
 
-    def fill_properties_with_dims(self, properties: PropertyDict) -> PropertyDict:
+    def fill_properties_with_dims(self, properties: symplt.PropertyDict) -> symplt.PropertyDict:
         for field_prop in properties.values():
             field_prop["dims"] = self.computational_grid.grids[field_prop["grid"]].dims
         return properties
 
-    def allocate(self, name: str, properties: PropertyDict) -> NDArrayLike:
+    def allocate(self, name: str, properties: symplt.PropertyDict) -> NDArrayLike:
         data_shape = get_data_shape_from_name(name)
         dtype = get_dtype_from_name(name)
         return zeros(
@@ -72,7 +69,7 @@ class ComputationalGridComponent:
         )
 
 
-class DiagnosticComponent(ComputationalGridComponent, SymplDiagnosticComponent):
+class DiagnosticComponent(ComputationalGridComponent, sympl.DiagnosticComponent):
     """Grid-aware variant of Sympl's ``DiagnosticComponent``."""
 
     def __init__(
@@ -85,13 +82,13 @@ class DiagnosticComponent(ComputationalGridComponent, SymplDiagnosticComponent):
         super().__init__(computational_grid, gt4py_config=gt4py_config)
         super(ComputationalGridComponent, self).__init__(enable_checks=enable_checks)
 
-    @cached_property
-    def input_properties(self) -> PropertyDict:
+    @functools.cached_property
+    def input_properties(self) -> symplt.PropertyDict:
         return self.fill_properties_with_dims(self._input_properties)
 
-    @abstractmethod
-    @cached_property
-    def _input_properties(self) -> PropertyDict:
+    @abc.abstractmethod
+    @functools.cached_property
+    def _input_properties(self) -> symplt.PropertyDict:
         """
         Dictionary where each key is the name of an input field, and the corresponding value is a
         dictionary specifying the units for that field ('units') and the identifier of the grid over
@@ -102,13 +99,13 @@ class DiagnosticComponent(ComputationalGridComponent, SymplDiagnosticComponent):
     def allocate_diagnostic(self, name: str) -> NDArrayLike:
         return self.allocate(name, self.diagnostic_properties)
 
-    @cached_property
-    def diagnostic_properties(self) -> PropertyDict:
+    @functools.cached_property
+    def diagnostic_properties(self) -> symplt.PropertyDict:
         return self.fill_properties_with_dims(self._diagnostic_properties)
 
-    @abstractmethod
-    @cached_property
-    def _diagnostic_properties(self) -> PropertyDict:
+    @abc.abstractmethod
+    @functools.cached_property
+    def _diagnostic_properties(self) -> symplt.PropertyDict:
         """
         Dictionary where each key is the name of a field diagnosed by the component, and the
         corresponding value is a dictionary specifying the units for that field ('units') and the
@@ -117,7 +114,7 @@ class DiagnosticComponent(ComputationalGridComponent, SymplDiagnosticComponent):
         ...
 
 
-class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendencyComponent):
+class ImplicitTendencyComponent(ComputationalGridComponent, sympl.ImplicitTendencyComponent):
     """Grid-aware variant of Sympl's ``ImplicitTendencyComponent``."""
 
     def __init__(
@@ -130,13 +127,13 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
         super().__init__(computational_grid, gt4py_config=gt4py_config)
         super(ComputationalGridComponent, self).__init__(enable_checks=enable_checks)
 
-    @cached_property
-    def input_properties(self) -> PropertyDict:
+    @functools.cached_property
+    def input_properties(self) -> symplt.PropertyDict:
         return self.fill_properties_with_dims(self._input_properties)
 
-    @abstractmethod
-    @cached_property
-    def _input_properties(self) -> PropertyDict:
+    @abc.abstractmethod
+    @functools.cached_property
+    def _input_properties(self) -> symplt.PropertyDict:
         """
         Dictionary where each key is the name of an input field, and the corresponding value is a
         dictionary specifying the units for that field ('units') and the identifier of the grid over
@@ -147,13 +144,13 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
     def allocate_tendency(self, name: str) -> NDArrayLike:
         return self.allocate(name, self.tendency_properties)
 
-    @cached_property
-    def tendency_properties(self) -> PropertyDict:
+    @functools.cached_property
+    def tendency_properties(self) -> symplt.PropertyDict:
         return self.fill_properties_with_dims(self._tendency_properties)
 
-    @abstractmethod
-    @cached_property
-    def _tendency_properties(self) -> PropertyDict:
+    @abc.abstractmethod
+    @functools.cached_property
+    def _tendency_properties(self) -> symplt.PropertyDict:
         """
         Dictionary where each key is the name of a tendency field computed by the component, and the
         corresponding value is a dictionary specifying the units for that field ('units') and the
@@ -164,13 +161,13 @@ class ImplicitTendencyComponent(ComputationalGridComponent, SymplImplicitTendenc
     def allocate_diagnostic(self, name: str) -> NDArrayLike:
         return self.allocate(name, self.diagnostic_properties)
 
-    @cached_property
-    def diagnostic_properties(self) -> PropertyDict:
+    @functools.cached_property
+    def diagnostic_properties(self) -> symplt.PropertyDict:
         return self.fill_properties_with_dims(self._diagnostic_properties)
 
-    @abstractmethod
-    @cached_property
-    def _diagnostic_properties(self) -> PropertyDict:
+    @abc.abstractmethod
+    @functools.cached_property
+    def _diagnostic_properties(self) -> symplt.PropertyDict:
         """
         Dictionary where each key is the name of a field diagnosed by the component, and the
         corresponding value is a dictionary specifying the units for that field ('units') and the

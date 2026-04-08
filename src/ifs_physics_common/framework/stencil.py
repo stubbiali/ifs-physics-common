@@ -18,13 +18,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from gt4py.cartesian import gtscript
+import gt4py.cartesian as gtc
 
 if TYPE_CHECKING:
     from collections.abc import Callable
     from typing import Any, Dict, Optional
-
-    from gt4py.cartesian import StencilObject
 
     from ifs_physics_common.framework.config import GT4PyConfig
 
@@ -59,7 +57,7 @@ def stencil_collection(name: str) -> Callable[[Callable], Callable]:
 
 def compile_stencil(
     name: str, gt4py_config: GT4PyConfig, externals: Optional[Dict[str, Any]] = None
-) -> StencilObject:
+) -> gtc.StencilObject:
     """Automate and customize the compilation of GT4Py stencils."""
     stencil_info = STENCIL_COLLECTION.get(name, None)
     if stencil_info is None:
@@ -75,7 +73,7 @@ def compile_stencil(
     if gt4py_config.backend not in ("debug", "numpy", "gtc:numpy"):
         kwargs["verbose"] = gt4py_config.verbose
 
-    return gtscript.stencil(  # type: ignore[no-any-return]
+    return gtc.gtscript.stencil(  # type: ignore[no-any-return]
         gt4py_config.backend,
         definition,
         name=name,

@@ -16,7 +16,7 @@
 
 from __future__ import annotations
 
-from functools import cached_property
+import functools
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -78,7 +78,7 @@ class Grid:
         self.dims = dims
         self.storage_shape = storage_shape or self.shape
 
-    @cached_property
+    @functools.cached_property
     def coords(self) -> Tuple[np.ndarray, ...]:
         return tuple(np.arange(size) for size in self.storage_shape)
 

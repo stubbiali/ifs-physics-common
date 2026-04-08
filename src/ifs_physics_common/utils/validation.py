@@ -24,19 +24,19 @@ import numpy as np
 from ifs_physics_common.utils.numpyx import to_numpy
 
 if TYPE_CHECKING:
-    from typing import Tuple
+    import numpy.typing as npt
 
-    from numpy.typing import NDArray
-
-    from sympl._core.data_array import DataArray
-    from sympl._core.typingx import DataArrayDict
+    import sympl
+    import sympl._core.typingx as symplt
 
 
 DEFAULT_ATOL: float = 1e-18
 DEFAULT_RTOL: float = 1e-12
 
 
-def get_storages_for_validation(field_a: DataArray, field_b: DataArray) -> Tuple[NDArray, NDArray]:
+def get_storages_for_validation(
+    field_a: sympl.DataArray, field_b: sympl.DataArray
+) -> tuple[npt.NDArray, npt.NDArray]:
     a_np = to_numpy(field_a.data[...])
     b_np = to_numpy(field_b.data[...])
     slc = tuple(slice(0, min(s_src, s_trg)) for s_src, s_trg in zip(a_np.shape, b_np.shape))
@@ -45,8 +45,8 @@ def get_storages_for_validation(field_a: DataArray, field_b: DataArray) -> Tuple
 
 def validate_field(
     name,
-    src_field: NDArray,
-    trg_field: NDArray,
+    src_field: npt.NDArray,
+    trg_field: npt.NDArray,
     atol: Optional[float] = None,
     rtol: Optional[float] = None,
 ) -> None:
@@ -82,8 +82,8 @@ def validate_field(
 
 
 def validate(
-    src: DataArrayDict,
-    trg: DataArrayDict,
+    src: symplt.DataArrayDict,
+    trg: symplt.DataArrayDict,
     atol: Optional[float] = None,
     rtol: Optional[float] = None,
 ) -> None:

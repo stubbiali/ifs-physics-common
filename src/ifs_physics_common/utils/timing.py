@@ -16,18 +16,17 @@
 
 from __future__ import annotations
 
-from contextlib import contextmanager
+import contextlib
 from typing import TYPE_CHECKING
 
 from sympl._core.time import Timer  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    from typing import Type
 
 
-@contextmanager
-def timing(label: str) -> Iterator[Type[Timer]]:
+@contextlib.contextmanager
+def timing(label: str) -> Iterator[type[Timer]]:
     try:
         Timer.start(label)
         yield Timer

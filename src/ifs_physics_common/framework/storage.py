@@ -16,13 +16,13 @@
 
 from __future__ import annotations
 
-from contextlib import contextmanager
+import contextlib
 from typing import TYPE_CHECKING
 
 import numpy as np
 
 import gt4py
-from sympl._core.data_array import DataArray  # noqa: PLC2701
+import sympl
 
 if TYPE_CHECKING:
     from collections.abc import Hashable, Iterator
@@ -60,7 +60,7 @@ def get_data_array(
     grid_id: Tuple[DimSymbol, ...],
     units: str,
     data_dims: Optional[Tuple[str, ...]] = None,
-) -> DataArray:
+) -> sympl.DataArray:
     """Create a ``DataArray`` out of ``buffer``."""
     grid = computational_grid.grids[grid_id]
     data_dims = data_dims or ()
@@ -68,7 +68,7 @@ def get_data_array(
     coords = grid.coords + tuple(
         np.arange(data_size) for data_size in buffer.shape[len(grid.dims) :]
     )
-    return DataArray(buffer, dims=dims, coords=coords, attrs={"units": units})
+    return sympl.DataArray(buffer, dims=dims, coords=coords, attrs={"units": units})
 
 
 def allocate_data_array(
@@ -80,7 +80,7 @@ def allocate_data_array(
     *,
     gt4py_config: GT4PyConfig,
     dtype: Literal["bool", "float", "int"],
-) -> DataArray:
+) -> sympl.DataArray:
     """
     Create a ``DataArray`` defined over the grid ``grid_id`` of ``computational_grid``
     and fill it with zeros.
@@ -123,7 +123,7 @@ def get_data_shape_from_name(field_name: str) -> Tuple[int, ...]:
 TEMPORARY_STORAGE_POOL: Dict[int, List[NDArrayLike]] = {}
 
 
-@contextmanager
+@contextlib.contextmanager
 def managed_temporary_storage(
     computational_grid: ComputationalGrid,
     *args: Tuple[Tuple[DimSymbol, ...], Literal["bool", "float", "int"]],
@@ -161,7 +161,7 @@ def managed_temporary_storage(
             TEMPORARY_STORAGE_POOL[grid_hash].append(storage)
 
 
-@contextmanager
+@contextlib.contextmanager
 def managed_temporary_storage_pool() -> Iterator[None]:
     """
     Clear the pool of temporary storages ``TEMPORARY_STORAGE_POOL`` on entry and exit.
