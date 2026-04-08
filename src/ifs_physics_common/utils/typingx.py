@@ -14,14 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections.abc import Hashable, Mapping, Sequence
-from typing import TypeAlias, TypeVar, Union
+from typing import Union
 
 import numpy as np
 import numpy.typing as npt
-
-import sympl
-import sympl._core.typingx as symplt  # noqa: PLC2701
 
 try:
     import cupy as cp
@@ -29,11 +25,4 @@ except ImportError:
     cp = np
 
 
-DataArray: TypeAlias = sympl.DataArray
-DataArrayDict: TypeAlias = symplt.DataArrayDict
 NDArrayLike = Union[npt.NDArray, cp.ndarray]
-NDArrayLikeDict = dict[str, NDArrayLike]
-ParameterDict = Mapping[str, Union[bool, float, int]]
-Property = dict[str, Union[str, Sequence[str], Hashable]]
-PropertyDict = dict[str, Property]
-Range = TypeVar("Range")
