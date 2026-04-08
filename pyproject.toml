@@ -31,7 +31,7 @@ keywords = [
     'physical parameterizations',
 ]
 license = 'Apache-2.0'
-license-files = ['LICENSE']
+license-files = ['LICENSE.md']
 name = 'ifs_physics_common'
 readme = {file = 'README.md', content-type = 'text/markdown'}
 requires-python = '>=3.10,<3.15'  # note(stubbiali): same as pmap
@@ -174,7 +174,7 @@ ignore_missing_imports = true
 platforms = ['Linux', 'Mac']
 
 [tool.setuptools.dynamic]
-version = {attrs = 'ifs_physics_common.__version__'}
+version = {attr = 'ifs_physics_common.__version__'}
 
 [tool.setuptools.package-data]
 'ifs_physics_common' = ['py.typed']
