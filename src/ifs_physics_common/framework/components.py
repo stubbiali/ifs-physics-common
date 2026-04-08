@@ -30,8 +30,6 @@ from ifs_physics_common.framework.storage import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any
-
     import gt4py.cartesian as gtc
     import sympl._core.typingx as symplt
 
@@ -47,9 +45,7 @@ class ComputationalGridComponent:
         self.computational_grid = computational_grid
         self.gt4py_config = gt4py_config
 
-    def compile_stencil(
-        self, name: str, externals: dict[str, Any] | None = None
-    ) -> gtc.StencilObject:
+    def compile_stencil(self, name: str, externals: dict | None = None) -> gtc.StencilObject:
         return compile_stencil(name, self.gt4py_config, externals)
 
     def fill_properties_with_dims(self, properties: symplt.PropertyDict) -> symplt.PropertyDict:

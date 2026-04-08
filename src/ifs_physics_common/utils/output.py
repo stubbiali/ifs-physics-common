@@ -22,7 +22,7 @@ import os
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Optional, Sequence
+    from typing import Literal, Optional, Sequence
 
 
 def write_performance_to_csv(
@@ -87,7 +87,7 @@ def write_stencils_performance_to_csv(
     num_cols: int,
     num_threads: int,
     num_runs: int,
-    exec_info: dict[str, Any],
+    exec_info: dict,
     key_patterns: Sequence[str],
 ) -> None:
     call_time = 0.0
