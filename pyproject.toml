@@ -26,10 +26,7 @@ dependencies = [
 ]
 description = 'Infrastructure code and convenient utilities to implement IFS physical parameterizations in Python.'
 dynamic = ['version']
-keywords = [
-    'framework',
-    'physical parameterizations',
-]
+keywords = ['framework', 'physical parametrizations']
 license = 'Apache-2.0'
 license-files = ['LICENSE.md']
 name = 'ifs_physics_common'
