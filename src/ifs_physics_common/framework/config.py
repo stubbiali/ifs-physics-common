@@ -21,16 +21,15 @@ import socket
 from typing import Any, Literal
 
 import numpy as np
-import numpy.typing as npt
 import pydantic
 
 
 class DataTypes(pydantic.BaseModel):
     """Specify the datatypes for bool, float and integer fields."""
 
-    bool: npt.DTypeLike
-    float: npt.DTypeLike
-    int: npt.DTypeLike
+    bool: type
+    float: type
+    int: type
 
     @staticmethod
     def with_precision(precision: Literal["double", "single"]) -> DataTypes:
