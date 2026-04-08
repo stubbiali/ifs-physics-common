@@ -19,7 +19,11 @@ from typing import Dict, TypeAlias, TypeVar, Union
 
 import numpy as np
 import numpy.typing as npt
-from sympl._core.typingx import DataArray as SymplDataArray, DataArrayDict as SymplDataArrayDict
+
+from sympl._core.typingx import (
+    DataArray as SymplDataArray,  # noqa: PLC2701
+    DataArrayDict as SymplDataArrayDict,  # noqa: PLC2701
+)
 
 try:
     import cupy as cp

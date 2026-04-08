@@ -23,18 +23,18 @@ import numpy as np
 
 if TYPE_CHECKING:
     from collections.abc import Hashable
-    from typing import Dict, Optional, Tuple
+    from typing import ClassVar, Optional, Tuple
 
 
 class DimSymbol:
     """Symbol identifying a dimension, e.g. I or I-1/2."""
 
-    _instances: Dict[int, DimSymbol] = {}
+    _instances: ClassVar[dict[int, DimSymbol]] = {}
 
     name: str
     offset: float
 
-    def __new__(cls, *args: Hashable) -> DimSymbol:
+    def __new__(cls, *args: Hashable) -> DimSymbol:  # noqa: PYI034
         key = hash(args)
         if key not in cls._instances:
             cls._instances[key] = super().__new__(cls)
@@ -59,7 +59,7 @@ class DimSymbol:
             return f"{self.name}"
 
 
-I = DimSymbol("I", 0)
+I = DimSymbol("I", 0)  # noqa: E741
 J = DimSymbol("J", 0)
 K = DimSymbol("K", 0)
 
@@ -86,7 +86,7 @@ class Grid:
 class ComputationalGrid:
     """A three-dimensional computational grid consisting of mass and staggered grid points."""
 
-    grids: Dict[Hashable, Grid]
+    grids: dict[Hashable, Grid]
 
     def __init__(self, nx: int, ny: int, nz: int) -> None:
         self.grids = {

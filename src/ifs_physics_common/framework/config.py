@@ -108,7 +108,7 @@ class PythonConfig(BaseModel):
     @classmethod
     def set_num_threads(cls, v: int) -> int:
         if v <= 0:
-            return int(os.environ.get("OMP_NUM_THREADS", 1))
+            return int(os.environ.get("OMP_NUM_THREADS", "1"))
         else:
             return v
 
@@ -218,7 +218,7 @@ class IOConfig(BaseModel):
             return v
 
         basename, extension = os.path.splitext(v)
-        if extension == "":
+        if not extension:
             return v + ".csv"
         elif extension == ".csv":
             return v

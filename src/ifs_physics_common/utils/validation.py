@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     from typing import Tuple
 
     from numpy.typing import NDArray
+
     from sympl._core.data_array import DataArray
     from sympl._core.typingx import DataArrayDict
 

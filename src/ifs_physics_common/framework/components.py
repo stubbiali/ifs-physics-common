@@ -21,11 +21,10 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
 from sympl._core.core_components import (
-    DiagnosticComponent as SymplDiagnosticComponent,
-    ImplicitTendencyComponent as SymplImplicitTendencyComponent,
+    DiagnosticComponent as SymplDiagnosticComponent,  # noqa: PLC2701
+    ImplicitTendencyComponent as SymplImplicitTendencyComponent,  # noqa: PLC2701
 )
 
-from ifs_physics_common.framework.config import GT4PyConfig
 from ifs_physics_common.framework.stencil import compile_stencil
 from ifs_physics_common.framework.storage import (
     get_data_shape_from_name,
@@ -36,10 +35,10 @@ from ifs_physics_common.framework.storage import (
 if TYPE_CHECKING:
     from typing import Any, Dict
 
+    from gt4py.cartesian import StencilObject
     from sympl._core.typingx import PropertyDict
 
-    from gt4py.cartesian import StencilObject
-
+    from ifs_physics_common.framework.config import GT4PyConfig
     from ifs_physics_common.framework.grid import ComputationalGrid
     from ifs_physics_common.utils.typingx import NDArrayLike
 
@@ -57,7 +56,7 @@ class ComputationalGridComponent:
         return compile_stencil(name, self.gt4py_config, externals)
 
     def fill_properties_with_dims(self, properties: PropertyDict) -> PropertyDict:
-        for field_name, field_prop in properties.items():
+        for field_prop in properties.values():
             field_prop["dims"] = self.computational_grid.grids[field_prop["grid"]].dims
         return properties
 

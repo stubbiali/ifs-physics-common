@@ -20,9 +20,9 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
 import numpy as np
-from sympl._core.data_array import DataArray
 
 import gt4py
+from sympl._core.data_array import DataArray  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from collections.abc import Hashable, Iterator
@@ -173,7 +173,7 @@ def managed_temporary_storage_pool() -> Iterator[None]:
         TEMPORARY_STORAGE_POOL.clear()
         yield None
     finally:
-        for grid_hash, storages in TEMPORARY_STORAGE_POOL.items():
+        for storages in TEMPORARY_STORAGE_POOL.values():
             num_storages = len(storages)
             for _ in range(num_storages):
                 storage = storages.pop()

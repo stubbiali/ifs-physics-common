@@ -19,7 +19,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
-from sympl._core.time import Timer
+from sympl._core.time import Timer  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
