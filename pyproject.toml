@@ -129,7 +129,7 @@ section-order = [
 split-on-trailing-comma = false
 
 [tool.ruff.lint.isort.sections]
-third-party-dev = ['gt4py']
+third-party-dev = ['gt4py', 'sympl']
 testing-first-party = ['tests']
 testing-third-party = ['pytest']
 
