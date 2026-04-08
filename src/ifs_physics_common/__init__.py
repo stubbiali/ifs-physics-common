@@ -16,4 +16,4 @@
 
 from ifs_physics_common import framework as framework, utils as utils
 
-__version__ = "0.3.0"
+__version__ = "0.3.0.dev"
