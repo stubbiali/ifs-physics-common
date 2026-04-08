@@ -15,16 +15,18 @@
 # limitations under the License.
 
 from __future__ import annotations
-import numpy as np
-from typing import Optional, TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Optional
 import warnings
+
+import numpy as np
 
 from ifs_physics_common.utils.numpyx import to_numpy
 
 if TYPE_CHECKING:
-    from numpy.typing import NDArray
     from typing import Tuple
 
+    from numpy.typing import NDArray
     from sympl._core.data_array import DataArray
     from sympl._core.typingx import DataArrayDict
 

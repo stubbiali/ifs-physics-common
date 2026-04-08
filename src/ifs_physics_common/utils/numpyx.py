@@ -15,8 +15,10 @@
 # limitations under the License.
 
 from __future__ import annotations
-import numpy as np
+
 from typing import TYPE_CHECKING
+
+import numpy as np
 
 try:
     import cupy as cp

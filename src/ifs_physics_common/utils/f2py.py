@@ -15,6 +15,7 @@
 # limitations under the License.
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -36,9 +37,9 @@ def ported_object(
 
     def core(obj: Any) -> Any:
         PORTED_OBJECTS[obj.__name__] = obj
-        setattr(obj, "from_file", from_file)
-        setattr(obj, "from_line", from_line)
-        setattr(obj, "to_line", to_line)
+        obj.from_file = from_file
+        obj.from_line = from_line
+        obj.to_line = to_line
         return obj
 
     if handle is not None:

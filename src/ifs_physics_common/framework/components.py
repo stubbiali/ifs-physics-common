@@ -15,9 +15,10 @@
 # limitations under the License.
 
 from __future__ import annotations
+
 from abc import abstractmethod
 from functools import cached_property
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sympl._core.core_components import (
     DiagnosticComponent as SymplDiagnosticComponent,
@@ -35,8 +36,9 @@ from ifs_physics_common.framework.storage import (
 if TYPE_CHECKING:
     from typing import Any, Dict
 
-    from gt4py.cartesian import StencilObject
     from sympl._core.typingx import PropertyDict
+
+    from gt4py.cartesian import StencilObject
 
     from ifs_physics_common.framework.grid import ComputationalGrid
     from ifs_physics_common.utils.typingx import NDArrayLike

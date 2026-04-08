@@ -15,10 +15,10 @@
 # limitations under the License.
 
 from collections.abc import Hashable, Mapping, Sequence
-import numpy as np
-import numpy.typing as npt
 from typing import Dict, TypeAlias, TypeVar, Union
 
+import numpy as np
+import numpy.typing as npt
 from sympl._core.typingx import DataArray as SymplDataArray, DataArrayDict as SymplDataArrayDict
 
 try:

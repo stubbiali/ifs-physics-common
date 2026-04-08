@@ -15,12 +15,14 @@
 # limitations under the License.
 
 from __future__ import annotations
+
 from contextlib import contextmanager
-import numpy as np
 from typing import TYPE_CHECKING
 
-import gt4py
+import numpy as np
 from sympl._core.data_array import DataArray
+
+import gt4py
 
 if TYPE_CHECKING:
     from collections.abc import Hashable, Iterator

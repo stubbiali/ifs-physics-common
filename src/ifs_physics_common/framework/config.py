@@ -15,11 +15,13 @@
 # limitations under the License.
 
 from __future__ import annotations
+
 import os
+import socket
+from typing import Any, Dict, Literal, Optional, Type, Union
+
 import numpy as np
 from pydantic import BaseModel, validator
-import socket
-from typing import Any, Dict, Literal, Optional, Union, Type
 
 
 class DataTypes(BaseModel):
