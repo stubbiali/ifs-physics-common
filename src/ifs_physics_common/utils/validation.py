@@ -16,7 +16,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 import warnings
 
 import numpy as np
@@ -47,8 +47,8 @@ def validate_field(
     name,
     src_field: npt.NDArray,
     trg_field: npt.NDArray,
-    atol: Optional[float] = None,
-    rtol: Optional[float] = None,
+    atol: float | None = None,
+    rtol: float | None = None,
 ) -> None:
     assert src_field.shape == trg_field.shape
 
@@ -84,8 +84,8 @@ def validate_field(
 def validate(
     src: symplt.DataArrayDict,
     trg: symplt.DataArrayDict,
-    atol: Optional[float] = None,
-    rtol: Optional[float] = None,
+    atol: float | None = None,
+    rtol: float | None = None,
 ) -> None:
     common_keys = sorted(set(src.keys()).intersection(set(trg.keys())))
     for key in common_keys:

@@ -26,7 +26,7 @@ import sympl
 
 if TYPE_CHECKING:
     from collections.abc import Hashable, Iterator
-    from typing import Dict, List, Literal, Optional, Tuple
+    from typing import Literal
 
     from ifs_physics_common.framework.config import GT4PyConfig
     from ifs_physics_common.framework.grid import ComputationalGrid, DimSymbol
@@ -36,7 +36,7 @@ if TYPE_CHECKING:
 def zeros(
     computational_grid: ComputationalGrid,
     grid_id: Hashable,
-    data_shape: Optional[Tuple[int, ...]] = None,
+    data_shape: tuple[int, ...] | None = None,
     *,
     gt4py_config: GT4PyConfig,
     dtype: Literal["bool", "float", "int"],
@@ -57,9 +57,9 @@ def zeros(
 def get_data_array(
     buffer: NDArrayLike,
     computational_grid: ComputationalGrid,
-    grid_id: Tuple[DimSymbol, ...],
+    grid_id: tuple[DimSymbol, ...],
     units: str,
-    data_dims: Optional[Tuple[str, ...]] = None,
+    data_dims: tuple[str, ...] | None = None,
 ) -> sympl.DataArray:
     """Create a ``DataArray`` out of ``buffer``."""
     grid = computational_grid.grids[grid_id]
@@ -73,10 +73,10 @@ def get_data_array(
 
 def allocate_data_array(
     computational_grid: ComputationalGrid,
-    grid_id: Tuple[DimSymbol, ...],
+    grid_id: tuple[DimSymbol, ...],
     units: str,
-    data_shape: Optional[Tuple[int, ...]] = None,
-    data_dims: Optional[Tuple[str, ...]] = None,
+    data_shape: tuple[int, ...] | None = None,
+    data_dims: tuple[str, ...] | None = None,
     *,
     gt4py_config: GT4PyConfig,
     dtype: Literal["bool", "float", "int"],
@@ -109,7 +109,7 @@ def get_dtype_from_name(field_name: str) -> Literal["bool", "float", "int"]:
         raise RuntimeError(f"Cannot retrieve dtype for field `{field_name}`.")
 
 
-def get_data_shape_from_name(field_name: str) -> Tuple[int, ...]:
+def get_data_shape_from_name(field_name: str) -> tuple[int, ...]:
     """
     Retrieve the data dimension of a field from its name.
 
@@ -120,13 +120,13 @@ def get_data_shape_from_name(field_name: str) -> Tuple[int, ...]:
     return out
 
 
-TEMPORARY_STORAGE_POOL: Dict[int, List[NDArrayLike]] = {}
+TEMPORARY_STORAGE_POOL: dict[int, list[NDArrayLike]] = {}
 
 
 @contextlib.contextmanager
 def managed_temporary_storage(
     computational_grid: ComputationalGrid,
-    *args: Tuple[Tuple[DimSymbol, ...], Literal["bool", "float", "int"]],
+    *args: tuple[tuple[DimSymbol, ...], Literal["bool", "float", "int"]],
     gt4py_config: GT4PyConfig,
 ) -> Iterator[NDArrayLike]:
     """

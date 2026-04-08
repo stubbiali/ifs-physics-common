@@ -20,10 +20,11 @@ import functools
 from typing import TYPE_CHECKING
 
 import numpy as np
+import numpy.typing as npt
 
 if TYPE_CHECKING:
     from collections.abc import Hashable
-    from typing import ClassVar, Optional, Tuple
+    from typing import ClassVar
 
 
 class DimSymbol:
@@ -69,9 +70,9 @@ class Grid:
 
     def __init__(
         self,
-        shape: Tuple[int, ...],
-        dims: Tuple[str, ...],
-        storage_shape: Optional[Tuple[int, ...]] = None,
+        shape: tuple[int, ...],
+        dims: tuple[str, ...],
+        storage_shape: tuple[int, ...] | None = None,
     ) -> None:
         assert len(shape) == len(dims)
         self.shape = shape
@@ -79,7 +80,7 @@ class Grid:
         self.storage_shape = storage_shape or self.shape
 
     @functools.cached_property
-    def coords(self) -> Tuple[np.ndarray, ...]:
+    def coords(self) -> tuple[npt.NDArray, ...]:
         return tuple(np.arange(size) for size in self.storage_shape)
 
 

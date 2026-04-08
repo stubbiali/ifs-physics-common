@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import abc
 import functools
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import sympl
 
@@ -30,7 +30,7 @@ from ifs_physics_common.framework.storage import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any
 
     import gt4py.cartesian as gtc
     import sympl._core.typingx as symplt
@@ -48,7 +48,7 @@ class ComputationalGridComponent:
         self.gt4py_config = gt4py_config
 
     def compile_stencil(
-        self, name: str, externals: Optional[Dict[str, Any]] = None
+        self, name: str, externals: dict[str, Any] | None = None
     ) -> gtc.StencilObject:
         return compile_stencil(name, self.gt4py_config, externals)
 

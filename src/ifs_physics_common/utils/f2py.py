@@ -20,18 +20,18 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
-    from typing import Any, Optional, Union
+    from typing import Any
 
 
 PORTED_OBJECTS = {}
 
 
 def ported_object(
-    handle: Optional[Any] = None,
-    from_file: Optional[Union[str, Sequence[str]]] = None,
-    from_line: Optional[int] = None,
-    to_line: Optional[int] = None,
-) -> Union[Any, Callable[[Any], Any]]:
+    handle: Any = None,
+    from_file: str | Sequence[str] | None = None,
+    from_line: int | None = None,
+    to_line: int | None = None,
+) -> Any | Callable[[Any], Any]:
     if from_line is not None and to_line is not None:
         assert from_line <= to_line
 

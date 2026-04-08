@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import os
 import socket
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal
 
 import numpy as np
 import numpy.typing as npt
@@ -47,25 +47,25 @@ class GT4PyConfig(pydantic.BaseModel):
 
     backend: str
     backend_opts: dict[str, Any] = {}
-    build_info: Optional[dict[str, Any]] = None
+    build_info: dict[str, Any] | None = None
     device_sync: bool = True
     dtypes: DataTypes = DataTypes(bool=bool, float=float, int=int)
     exec_info: dict[str, Any] = {}
-    managed: Union[bool, str] = "gt4py"
+    managed: bool | str = "gt4py"
     rebuild: bool = False
     validate_args: bool = False
     verbose: bool = True
 
     @pydantic.validator("exec_info")
     @classmethod
-    def set_exec_info(cls, v: Optional[dict[str, Any]]) -> dict[str, Any]:
+    def set_exec_info(cls, v: dict[str, Any] | None) -> dict[str, Any]:
         v = v or {}
         return {**v, "__aggregate_data": True}
 
     def reset_exec_info(self) -> None:
         self.exec_info = {"__aggregate_data": self.exec_info.get("__aggregate_data", True)}
 
-    def with_backend(self, backend: Optional[str]) -> GT4PyConfig:
+    def with_backend(self, backend: str | None) -> GT4PyConfig:
         args = self.dict()
         if backend is not None:
             args["backend"] = backend
@@ -92,8 +92,8 @@ class PythonConfig(pydantic.BaseModel):
     enable_validation: bool
     input_file: str
     reference_file: str
-    atol: Optional[float] = None
-    rtol: Optional[float] = None
+    atol: float | None = None
+    rtol: float | None = None
 
     # run
     num_runs: int
@@ -118,7 +118,7 @@ class PythonConfig(pydantic.BaseModel):
     def add_dtypes(cls, v: GT4PyConfig, values: dict[str, Any]) -> GT4PyConfig:
         return v.with_dtypes(values["data_types"])
 
-    def with_backend(self, backend: Optional[str]) -> PythonConfig:
+    def with_backend(self, backend: str | None) -> PythonConfig:
         args = self.dict()
         args["gt4py_config"] = GT4PyConfig(**args["gt4py_config"]).with_backend(backend).dict()
         return PythonConfig(**args)
@@ -131,13 +131,13 @@ class PythonConfig(pydantic.BaseModel):
         args["sympl_enable_checks"] = enabled
         return PythonConfig(**args)
 
-    def with_num_cols(self, num_cols: Optional[int]) -> PythonConfig:
+    def with_num_cols(self, num_cols: int | None) -> PythonConfig:
         args = self.dict()
         if num_cols is not None:
             args["num_cols"] = num_cols
         return PythonConfig(**args)
 
-    def with_num_runs(self, num_runs: Optional[int]) -> PythonConfig:
+    def with_num_runs(self, num_runs: int | None) -> PythonConfig:
         args = self.dict()
         if num_runs is not None:
             args["num_runs"] = num_runs
@@ -150,7 +150,7 @@ class PythonConfig(pydantic.BaseModel):
         return PythonConfig(**args)
 
     def with_validation(
-        self, enabled: bool, atol: Optional[float] = None, rtol: Optional[float] = None
+        self, enabled: bool, atol: float | None = None, rtol: float | None = None
     ) -> PythonConfig:
         args = self.dict()
         args["enable_validation"] = enabled
@@ -209,12 +209,12 @@ class FortranConfig(pydantic.BaseModel):
 class IOConfig(pydantic.BaseModel):
     """Gather options for I/O."""
 
-    output_csv_file: Optional[str]
+    output_csv_file: str | None
     host_name: str
 
     @pydantic.validator("output_csv_file")
     @classmethod
-    def check_extension(cls, v: Optional[str]) -> Optional[str]:
+    def check_extension(cls, v: str | None) -> str | None:
         if v is None:
             return v
 
@@ -228,15 +228,15 @@ class IOConfig(pydantic.BaseModel):
 
     @pydantic.validator("host_name", pre=True)
     @classmethod
-    def set_host_name(cls, v: Optional[str]) -> str:
+    def set_host_name(cls, v: str | None) -> str:
         return v or socket.gethostname()
 
-    def with_host_name(self, host_name: Optional[str]) -> IOConfig:
+    def with_host_name(self, host_name: str | None) -> IOConfig:
         args = self.dict()
         args["host_name"] = host_name
         return IOConfig(**args)
 
-    def with_output_csv_file(self, output_csv_file: Optional[str]) -> IOConfig:
+    def with_output_csv_file(self, output_csv_file: str | None) -> IOConfig:
         args = self.dict()
         args["output_csv_file"] = output_csv_file
         return IOConfig(**args)
