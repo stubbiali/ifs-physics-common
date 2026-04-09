@@ -37,12 +37,12 @@ class DataTypes:
     float: npt.DTypeLike
     int: npt.DTypeLike
 
-    @staticmethod
-    def with_precision(precision: Literal["double", "single"]) -> DataTypes:
+    @classmethod
+    def from_precision(cls, precision: Literal["double", "single"]) -> DataTypes:
         if precision == "double":
-            return DataTypes(bool=bool, float=np.float64, int=np.int64)
+            return cls(bool=bool, float=np.float64, int=np.int64)
         elif precision == "single":
-            return DataTypes(bool=bool, float=np.float32, int=np.int32)
+            return cls(bool=bool, float=np.float32, int=np.int32)
         else:
             raise ValueError("Either `double` or `single` precision supported.")
 
@@ -106,7 +106,7 @@ class PythonConfig:
 
     def with_precision(self, precision: Literal["double", "single"]) -> PythonConfig:
         self.precision = precision
-        self.data_types = self.data_types.with_precision(precision)
+        self.data_types = self.data_types.from_precision(precision)
         return self
 
 
