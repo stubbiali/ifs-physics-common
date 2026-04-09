@@ -16,6 +16,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 from typing import TYPE_CHECKING
 
 import gt4py.cartesian as gtc
@@ -63,7 +64,7 @@ def compile_stencil(
         raise RuntimeError(f"Unknown stencil `{name}`.")
     definition = stencil_info["definition"]
 
-    dtypes = gt4py_config.dtypes.dict()
+    dtypes = dataclasses.asdict(gt4py_config.dtypes)
     dtypes[float] = gt4py_config.dtypes.float  # type: ignore[index]
     dtypes[int] = gt4py_config.dtypes.int  # type: ignore[index]
     externals = externals or {}
